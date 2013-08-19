@@ -1,45 +1,35 @@
+/*
+ * TopStack (c) Copyright 2012-2013 Transcend Computing, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the License);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.msi.tough.engine.aws.elasticache;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.cloudformation.AmazonCloudFormationClient;
 import com.amazonaws.services.cloudformation.model.CreateStackRequest;
-import com.amazonaws.services.cloudformation.model.CreateStackResult;
 import com.msi.tough.core.Appctx;
-import com.msi.tough.core.CommaObject;
-import com.msi.tough.core.JsonUtil;
 import com.msi.tough.core.converter.ToJson;
 import com.msi.tough.model.AccountBean;
-import com.msi.tough.model.elasticache.CacheClusterBean;
 import com.msi.tough.utils.ChefUtil;
 
 public class ElasticacheServiceUtils {
 
 	final static Logger logger = LoggerFactory
 			.getLogger(ElasticacheServiceUtils.class);
-
-	private static void addParameterValue(final String name,
-			final Object value, final Map<String, Object> parameterValues) {
-		if (value != null) {
-			parameterValues.put(name, value);
-		}
-	}
-
-	private static void addParameterValue(final String name,
-			final String value, final Map<String, JsonNode> parameterValues) {
-		if (value != null) {
-			parameterValues.put(name, new TextNode(value));
-		}
-	}
 
 	public static void CallCloudFormation(final AccountBean ac) {
 
@@ -59,7 +49,7 @@ public class ElasticacheServiceUtils {
 		// Object o = new
 		// com.amazonaws.services.cloudformation.model.CreateStackRequest();
 		final CreateStackRequest request = new CreateStackRequest();
-		final CreateStackResult result = client.createStack(request);
+		client.createStack(request);
 	}
 
 	private static boolean createDatabagItem(final ChefUtil chefUtil,
@@ -103,50 +93,6 @@ public class ElasticacheServiceUtils {
 		}
 
 		return createdSuccessfully;
-	}
-
-	private static String getCloudFormationTemplate(final CacheClusterBean cc) {
-
-		String jsonTemplate = null;
-
-		// Define Security Group(s)
-		// These include both references to the Security Group Resource(s) in
-		// the Cluster Properties
-		// and the groups themselves
-		final List<CacheSecurityGroupResource> securityGroupResources = new ArrayList<CacheSecurityGroupResource>();
-		final ArrayList<LinkedHashMap<String, Object>> cacheSecurityGroupNames = new ArrayList<LinkedHashMap<String, Object>>();
-		final List<CacheSecurityGroupIngressResource> securityGroupIngressResources = new ArrayList<CacheSecurityGroupIngressResource>();
-
-		final CommaObject cosec = new CommaObject(cc.getSecurityGroups());
-
-		for (final String secGrp : cosec.getList()) {
-			final LinkedHashMap<String, Object> securityGroup = JsonUtil
-					.toSingleHash("Ref", secGrp);
-			cacheSecurityGroupNames.add(securityGroup);
-		}
-
-		// Define the AWS::ElastiCache::CacheCluster Resource
-		final CacheClusterResource cacheClusterResource = new CacheClusterResource();
-		cacheClusterResource.setDefaultProperties();
-
-		// Wrapper object for entire JSON Template serialization
-		final ElasticacheCloudFormation cfc = new ElasticacheCloudFormation(
-				cc.getName(), "Elasticache Cluster Template",
-				cacheClusterResource, securityGroupResources,
-				securityGroupIngressResources);
-
-		try {
-
-			jsonTemplate = cfc.toJson();
-
-			logger.debug(JsonUtil.toJsonPrettyPrintString(JsonUtil
-					.load(jsonTemplate)));
-		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return jsonTemplate;
 	}
 
 }

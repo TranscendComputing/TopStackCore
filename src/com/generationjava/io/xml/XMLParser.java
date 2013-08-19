@@ -1,32 +1,32 @@
 /*
  * Copyright (c) 2003, Henri Yandell
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or 
- * without modification, are permitted provided that the 
+ *
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are permitted provided that the
  * following conditions are met:
- * 
- * + Redistributions of source code must retain the above copyright notice, 
+ *
+ * + Redistributions of source code must retain the above copyright notice,
  *   this list of conditions and the following disclaimer.
- * 
- * + Redistributions in binary form must reproduce the above copyright notice, 
- *   this list of conditions and the following disclaimer in the documentation 
+ *
+ * + Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
  *   and/or other materials provided with the distribution.
- * 
- * + Neither the name of Genjava-Core nor the names of its contributors 
- *   may be used to endorse or promote products derived from this software 
+ *
+ * + Neither the name of Genjava-Core nor the names of its contributors
+ *   may be used to endorse or promote products derived from this software
  *   without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package com.generationjava.io.xml;
@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.Stack;
 
 /**
- * A tiny parser of xml text. It is intended to deal with simple 
+ * A tiny parser of xml text. It is intended to deal with simple
  * config files.
  */
 public class XMLParser {
@@ -59,19 +59,19 @@ public class XMLParser {
 
     public XMLParser() {
     }
-    
+
     /**
      * Parse an XML text read in from a Reader.
      * Returns the root node of the xml text.
      */
     public XMLNode parseXML(Reader reader) throws IOException {
         int state = VACUUM;
-        int x = 1;   // current character number 
+        int x = 1;   // current character number
         int y = 1;   // current line number
         int rch = 0;
         char ch;
         boolean pi = false;
-        
+
         StringBuffer tag_name = new StringBuffer();
         StringBuffer attr_name = new StringBuffer();
         StringBuffer attr_value = new StringBuffer();
@@ -79,14 +79,14 @@ public class XMLParser {
 
         XMLNode root = null;
         XMLNode node = null;
-        
-        
+
+
         // the current parent.
         XMLNode parent = null;
-        
+
         // Stack is used to remember the hierarchy of parents.
         Stack stack = new Stack();
-        
+
         while( (rch = reader.read()) != -1) {
             ch = (char)rch;
             // QUERY: Should newlines only be allowed in a VACUUM ?
@@ -97,7 +97,7 @@ public class XMLParser {
                 x = 1;
                 continue;
             }
-            
+
             switch(state) {
               case VACUUM: {
                   if(ch == '<') {
@@ -126,7 +126,7 @@ public class XMLParser {
                   }
               }
               break;
-              
+
               case START_COMMENT: {
                   if(ch == '-') {
                       // feels bad to do this here.
@@ -259,7 +259,7 @@ public class XMLParser {
                   }
               }
               break;
-              
+
               case IN_TAG: {
                   if((ch == ' ') || (ch == '\t') ) {
                     continue;
@@ -279,7 +279,7 @@ public class XMLParser {
                   }
               }
               break;
-                            
+
               case SLASH: {
                   if(ch == '>') {
                     state = VACUUM;
@@ -288,7 +288,7 @@ public class XMLParser {
                   }
               }
               break;
-              
+
               case CLOSING_TAG: {
                   if(ch == '>') {
                       state = VACUUM;
@@ -297,7 +297,7 @@ public class XMLParser {
                   }
               }
               break;
-                            
+
               case ATTR_NAME: {
                   if((ch == ' ') || (ch == '\t') ) {
                     node.addAttr(attr_name.toString(), attr_name.toString());
@@ -310,7 +310,7 @@ public class XMLParser {
                   }
               }
               break;
-              
+
               case END_ATTR_NAME: {
                   if(ch == '"') {
                     state = ATTR_VALUE;
@@ -320,7 +320,7 @@ public class XMLParser {
                   }
               }
               break;
-              
+
               case ATTR_VALUE: {
                   if(ch == '"') {
                     node.addAttr(attr_name.toString(), attr_value.toString());

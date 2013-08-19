@@ -1,3 +1,18 @@
+/*
+ * TopStack (c) Copyright 2012-2013 Transcend Computing, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the License);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.msi.tough.utils.rds;
 
 import java.util.ArrayList;
@@ -19,14 +34,10 @@ import com.amazonaws.services.rds.model.DBSecurityGroupMembership;
 import com.amazonaws.services.rds.model.Endpoint;
 import com.msi.tough.core.Appctx;
 import com.msi.tough.core.BaseException;
-import com.msi.tough.core.HibernateUtil;
-import com.msi.tough.engine.core.Template;
-import com.msi.tough.engine.core.TemplateContext;
 import com.msi.tough.model.AccountBean;
 import com.msi.tough.model.rds.RdsDbinstance;
 import com.msi.tough.model.rds.RdsDbparameterGroup;
 import com.msi.tough.model.rds.RdsDbsecurityGroup;
-import com.msi.tough.model.rds.RdsParameter;
 import com.msi.tough.utils.ConfigurationUtil;
 import com.msi.tough.utils.RDSQueryFaults;
 import com.msi.tough.utils.RDSUtil;
@@ -48,7 +59,7 @@ public class InstanceEntity {
 	 * Inserts records into the following tables rds_dbinstance
 	 * rds_security_group_membership rds_dbparameter_group_status This method
 	 * also checks quota's
-	 * 
+	 *
 	 * @param createRec
 	 * @param userID
 	 * @param address
@@ -169,7 +180,7 @@ public class InstanceEntity {
 	/**************************************************************************
 	 * Select all DBSecurityGroupMembership Records for the given DBInstance or
 	 * for a DBSecurityGroup
-	 * 
+	 *
 	 * @param sess
 	 *            Hibernate Session
 	 * @param paramGroupName
@@ -220,7 +231,7 @@ public class InstanceEntity {
 
 	/**************************************************************************
 	 * Select all RDSDbinstance Records for the given DBParameterGroup name
-	 * 
+	 *
 	 * @param sess
 	 *            Hibernate Session
 	 * @param paramGroupName
@@ -241,7 +252,7 @@ public class InstanceEntity {
 	/**************************************************************************
 	 * Select all DBParameterGrpStatus Records for the given DBInstance or for a
 	 * DBSecurityGroup
-	 * 
+	 *
 	 * @param instanceID
 	 * @param userID
 	 * @return
@@ -285,7 +296,7 @@ public class InstanceEntity {
 	 * tables DBInstance DBSecurityGroup DBParameterGroup PendingModifiedValues
 	 * The last three groups are optional and loaded using the getRelatedRecords
 	 * method (split out to make this method more maintainable).
-	 * 
+	 *
 	 * @param instanceID
 	 * @param userID
 	 * @param marker
@@ -322,7 +333,7 @@ public class InstanceEntity {
 	 * read replica's of this Master DBInstance SQL is Select DBInstanceID from
 	 * FROM DBInstance Where ReadReplicaSourceDBInstanceIdentifier =
 	 * <instanceID>
-	 * 
+	 *
 	 * @param instanceID
 	 * @param userID
 	 * @return list of ReadReplica (array of Strings - ReadReplicaInstanceID)
@@ -346,7 +357,7 @@ public class InstanceEntity {
 	/**************************************************************************
 	 * select all SecurityGroupMemebership Records for this DBInstance or
 	 * SecurityGroupName
-	 * 
+	 *
 	 * @param instanceID
 	 * @param userID
 	 * @return

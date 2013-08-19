@@ -1,3 +1,18 @@
+/*
+ * TopStack (c) Copyright 2012-2013 Transcend Computing, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the License);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.msi.tough.engine.aws.ec2;
 
 import java.text.ParseException;
@@ -13,10 +28,6 @@ import org.dasein.util.uom.storage.Storage;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.DetachVolumeRequest;
-import com.amazonaws.services.ec2.model.DetachVolumeResult;
 import com.msi.tough.cf.AccountType;
 import com.msi.tough.cf.CFType;
 import com.msi.tough.cf.ec2.VolumeAttachmentType;
@@ -215,7 +226,7 @@ public class Volume extends BaseProvider {
 		final String volumeId = (String) call.getProperty("VolumeId");
 		final String avZone = (String) call
 				.getProperty(Constants.AVAILABILITYZONE);
-		logger.debug("VolumeId: " + volumeId + "; AvailabilityZone: " + avZone);		
+		logger.debug("VolumeId: " + volumeId + "; AvailabilityZone: " + avZone);
 		final CloudProvider cloudProvider = call.getCloudProvider();
 		final ComputeServices comp = cloudProvider.getComputeServices();
 		final VolumeSupport volserv = comp.getVolumeSupport();

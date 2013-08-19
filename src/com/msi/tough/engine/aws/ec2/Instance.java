@@ -1,3 +1,18 @@
+/*
+ * TopStack (c) Copyright 2012-2013 Transcend Computing, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the License);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.msi.tough.engine.aws.ec2;
 
 import java.util.Arrays;
@@ -22,16 +37,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 
-import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
-import com.amazonaws.services.ec2.model.DescribeInstancesResult;
-import com.amazonaws.services.ec2.model.EbsInstanceBlockDevice;
-import com.amazonaws.services.ec2.model.GroupIdentifier;
-import com.amazonaws.services.ec2.model.InstanceBlockDeviceMapping;
-import com.amazonaws.services.ec2.model.InstanceState;
-import com.amazonaws.services.ec2.model.Placement;
-import com.amazonaws.services.ec2.model.Reservation;
-import com.amazonaws.services.ec2.model.Tag;
 import com.msi.tough.cf.AccountType;
 import com.msi.tough.cf.CFType;
 import com.msi.tough.cf.ec2.InstanceType;
@@ -42,12 +47,10 @@ import com.msi.tough.core.HibernateUtil.Operation;
 import com.msi.tough.core.JsonUtil;
 import com.msi.tough.core.StringHelper;
 import com.msi.tough.core.TemplateHelper;
-import com.msi.tough.dasein.DaseinHelper;
 import com.msi.tough.engine.core.BaseProvider;
 import com.msi.tough.engine.core.CallStruct;
 import com.msi.tough.engine.resource.Resource;
 import com.msi.tough.engine.utils.InstanceUtils;
-import com.msi.tough.model.AccountBean;
 import com.msi.tough.model.InstanceBean;
 import com.msi.tough.query.ErrorResponse;
 import com.msi.tough.utils.CFUtil;
@@ -59,15 +62,15 @@ import com.msi.tough.utils.InstanceUtil;
 
 /**
  * Instance provider
- * 
+ *
  * @author raj
- * 
+ *
  */
 public class Instance extends BaseProvider implements Constants {
 	private final static Logger logger = Appctx.getLogger(Instance.class
 			.getName());
 	public static String TYPE = "AWS::EC2::Instance";
-	
+
 	public static InstanceType createChefInstance(final AccountType ac,
 			final String name, final String parentId,
 			final CallStruct parentCall, final Map<String, Object> prop)
@@ -224,7 +227,7 @@ public class Instance extends BaseProvider implements Constants {
 		ins.setAcId(ac.getId());
 		ins.setAvailabilityZone((String) call.getProperty(AVAILABILITYZONE));
 		ins.setImageId((String) call.getRequiredProperty(IMAGEID));
-			
+
 		ins.setInstanceType((String) call.getRequiredProperty(INSTANCETYPE));
 		logger.debug("**Setting InstanceType for the new instance: " + (String) call.getRequiredProperty(INSTANCETYPE));
 		final String kid = (String) call.getProperty(KERNELID);
@@ -267,8 +270,8 @@ public class Instance extends BaseProvider implements Constants {
 		if (ins.getHostname() == null) {
 			ins.setHostname(call.getStackId() + "_" + call.getName());
 		}
-		
-		
+
+
 
 		// call to launch an instance
 		call.setAvailabilityZone(ins.getAvailabilityZone());
@@ -277,7 +280,7 @@ public class Instance extends BaseProvider implements Constants {
 		final VirtualMachineSupport vmSupport = compute.getVirtualMachineSupport();
 		final NetworkServices network = cloudProvider.getNetworkServices();
 		String instanceType = ins.getInstanceType();
-        
+
 		final VMLaunchOptions opts = VMLaunchOptions.getInstance(
 				instanceType, ins.getImageId(), ins.getHostname(),
 				ins.getHostname(), ins.getHostname());
@@ -295,9 +298,9 @@ public class Instance extends BaseProvider implements Constants {
 			final CommaObject seco = new CommaObject(securityGroupIds);
 			opts.behindFirewalls(seco.toArray());
 		}
-		
+
 		VirtualMachine vm = vmSupport.launch(opts);
-		
+
 
 		// get pvtip address of the launched instance
 		logger.info("instance launched " + vm.getProviderVirtualMachineId());
