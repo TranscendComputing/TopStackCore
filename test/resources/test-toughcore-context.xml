@@ -19,11 +19,14 @@
 
     <!-- auto-inject, autowire using annotations -->
     <context:annotation-config />
+    <!-- inject core action classes (ActionTestHelper, etc.) -->
+    <context:component-scan base-package="com.msi.tough.query" />
 
     <import resource="cloud-config.xml" />
 
     <!-- inject core action classes (ActionTestHelper, etc.) -->
     <context:component-scan base-package="com.msi.tough.query" />
+    <context:component-scan base-package="com.msi.tough.model" />
 
     <bean id="servicesPropertyConfigurer"
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -118,8 +121,8 @@
 
     <bean id="testConnection" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://${deploy.ip}:3306/msi" />
-        <property name="username" value="msi" />
+        <property name="url" value="jdbc:mysql://${deploy.ip}:3306/${db.user}" />
+        <property name="username" value="${db.user}" />
         <property name="password" value="${db.password}" />
         <property name="defaultAutoCommit" value="false"></property>
         <property name="initialSize" value="1"></property>
@@ -128,7 +131,7 @@
         <property name="testOnBorrow" value="false"></property>
         <property name="testOnReturn" value="false"></property>
         <property name="validationQuery" value="SELECT 1"></property>
-        <property name="timeBetweenEvictionRunsMillis" value="5000"></property>
+        <property name="timeBetweenEvictionRunsMillis" value="-1"></property>
         <property name="minIdle" value="1"></property>
         <property name="maxWait" value="5000"></property>
         <property name="removeAbandoned" value="false"></property>

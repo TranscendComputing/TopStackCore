@@ -32,160 +32,165 @@ import javax.persistence.Table;
 @Table(name = "rds_parameter")
 public class RdsParameter {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="rds_parameter_id")
-	private long id;
-	
-	@ManyToOne
-	@JoinColumn(name="rds_parameter_group_id", nullable=false)
-	private RdsDbparameterGroup rdsParamGroup;
-	
-	@Column(name="parameter_name")
-	private String parameterName;
-	
-	// AWS 5.1 parameter 271 chars long
-	@Column(name="parameter_value", length=320)
-	private String parameterValue;
-	
-	@Column(name="description")
-	private String description;
-	
-	@Column(name="source")
-	private String source;
-	
-	@Column(name="data_type")
-	private String dataType;
-	
-	@Column(name="allowed_values", length=512)
-	private String allowedValues;
-	
-	@Column(name="applied_method")
-	private String applyMethod;
-	
-	@Column(name="apply_type")
-	private String applyType;
-	
-	@Column(name="is_modifiable")
-	private Boolean isModifiable;
-	
-	@Column(name="minimum_engine_version")
-	private String minimumEngineVersion;
-	
-	public RdsParameter(){}
-	
-	public RdsDbparameterGroup getRdsParamGroup() {
-		return rdsParamGroup;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rds_parameter_id")
+    private long id;
 
-	public void setRdsParamGroup(RdsDbparameterGroup rdsParamGroup) {
-		this.rdsParamGroup = rdsParamGroup;
-	}
+    @ManyToOne
+    @JoinColumn(name = "rds_parameter_group_id", nullable = false)
+    private RdsDbparameterGroup rdsParamGroup;
 
-	public RdsParameter (RdsDbparameterGroup rdsParamGroup){
-		this.rdsParamGroup = rdsParamGroup;
-	}
+    @Column(name = "parameter_name")
+    private String parameterName;
 
-	public String getAllowedValues() {
-		return allowedValues;
-	}
+    // AWS 5.1 parameter 271 chars long
+    @Column(name = "parameter_value", length = 320)
+    private String parameterValue;
 
-	public String getApplyMethod() {
-		return applyMethod;
-	}
+    @Column(name = "description")
+    private String description;
 
-	public void setApplyMethod(String applyMethod) {
-		this.applyMethod = applyMethod;
-	}
+    @Column(name = "source")
+    private String source;
 
-	public String getApplyType() {
-		return applyType;
-	}
+    @Column(name = "data_type")
+    private String dataType;
 
-	public String getDataType() {
-		return dataType;
-	}
+    @Column(name = "allowed_values", length = 512)
+    private String allowedValues;
 
-	public RdsDbparameterGroup getParamGroup() {
-		return rdsParamGroup;
-	}
+    @Column(name = "applied_method")
+    private String applyMethod;
 
-	public String getDescription() {
-		return description;
-	}
+    @Column(name = "apply_type")
+    private String applyType;
 
-	public long getId() {
-		return id;
-	}
+    @Column(name = "is_modifiable")
+    private Boolean isModifiable;
 
-	public Boolean getIsModifiable() {
-		return isModifiable;
-	}
+    @Column(name = "minimum_engine_version")
+    private String minimumEngineVersion;
 
-	public String getMinimumEngineVersion() {
-		return minimumEngineVersion;
-	}
+    public RdsParameter() {
+    }
 
-	public String getParameterName() {
-		return parameterName;
-	}
+    public RdsDbparameterGroup getRdsParamGroup() {
+        return rdsParamGroup;
+    }
 
-	public String getParameterValue() {
-		return parameterValue;
-	}
+    public void setRdsParamGroup(RdsDbparameterGroup rdsParamGroup) {
+        this.rdsParamGroup = rdsParamGroup;
+    }
 
-	public String getSource() {
-		return source;
-	}
+    public RdsParameter(RdsDbparameterGroup rdsParamGroup) {
+        this.rdsParamGroup = rdsParamGroup;
+    }
 
-	public void setAllowedValues(String allowedValues) {
-		this.allowedValues = allowedValues;
-	}
+    public String getAllowedValues() {
+        return allowedValues;
+    }
 
-	/*public void setApplyMethod(String applyMethod) {
-		this.applyMethod = applyMethod;
-	}*/
+    public String getApplyMethod() {
+        return applyMethod;
+    }
 
-	public void setApplyType(String applyType) {
-		this.applyType = applyType;
-	}
+    public void setApplyMethod(String applyMethod) {
+        this.applyMethod = applyMethod;
+    }
 
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-	}
+    public String getApplyType() {
+        return applyType;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDataType() {
+        return dataType;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public RdsDbparameterGroup getParamGroup() {
+        return rdsParamGroup;
+    }
 
-	public void setIsModifiable(Boolean isModifiable) {
-		this.isModifiable = isModifiable;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setMinimumEngineVersion(String minimumEngineVersion) {
-		this.minimumEngineVersion = minimumEngineVersion;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setParameterName(String parameterName) {
-		this.parameterName = parameterName;
-	}
+    public Boolean getIsModifiable() {
+        return isModifiable;
+    }
 
-	public void setParameterValue(String parameterValue) {
-		this.parameterValue = parameterValue;
-	}
+    public String getMinimumEngineVersion() {
+        return minimumEngineVersion;
+    }
 
-	public void setSource(String source) {
-		this.source = source;
-	}
-	
-	public String toString(){
-		return parameterName + ": (value = " + this.parameterValue + "), (description = " + this.description 
-		+ "), (source = " + this.source + "), (dataType = " + this.dataType + "), (allowedValues = " + this.allowedValues 
-		+ "), (applyType = " + this.applyType + "), (isModifiable = " + this.isModifiable + "), (minimumEngineVersion = " + this.minimumEngineVersion
-		+ ")";
-	}
+    public String getParameterName() {
+        return parameterName;
+    }
+
+    public String getParameterValue() {
+        return parameterValue;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setAllowedValues(String allowedValues) {
+        this.allowedValues = allowedValues;
+    }
+
+    /*
+     * public void setApplyMethod(String applyMethod) { this.applyMethod =
+     * applyMethod; }
+     */
+
+    public void setApplyType(String applyType) {
+        this.applyType = applyType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setIsModifiable(Boolean isModifiable) {
+        this.isModifiable = isModifiable;
+    }
+
+    public void setMinimumEngineVersion(String minimumEngineVersion) {
+        this.minimumEngineVersion = minimumEngineVersion;
+    }
+
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
+    }
+
+    public void setParameterValue(String parameterValue) {
+        this.parameterValue = parameterValue;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String toString() {
+        return parameterName + ": (value = " + this.parameterValue
+                + "), (description = " + this.description + "), (source = "
+                + this.source + "), (dataType = " + this.dataType
+                + "), (allowedValues = " + this.allowedValues
+                + "), (applyType = " + this.applyType + "), (isModifiable = "
+                + this.isModifiable + "), (minimumEngineVersion = "
+                + this.minimumEngineVersion + ")";
+    }
 }

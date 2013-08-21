@@ -22,8 +22,10 @@ import freemarker.template.TemplateModelException;
 
 public class FTLGetConfiguration implements TemplateMethodModel {
 
-	@Override
-	public Object exec(List args) throws TemplateModelException {
-		return ConfigurationUtil.getConfiguration(args);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object exec(@SuppressWarnings("rawtypes") List args)
+            throws TemplateModelException {
+        return ConfigurationUtil.getConfiguration(args);
+    }
 }

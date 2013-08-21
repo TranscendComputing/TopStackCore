@@ -28,8 +28,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
-import org.slf4j.Logger;
-
 import com.msi.tough.utils.FTLGetConfiguration;
 
 import freemarker.template.Configuration;
@@ -42,60 +40,56 @@ import freemarker.template.Template;
  *
  */
 public class TemplateHelper {
-	private static final Logger logger = Appctx.getLogger(TemplateHelper.class
-			.getName());
 
-	private static Configuration cfg = null;
+    private static Configuration cfg = null;
 
-	private String templateDir = null;
-	private String workDir = null;
+    private String templateDir = null;
+    private String workDir = null;
     private String logDir = null;
-	private static TemplateHelper instance = null;
+    private static TemplateHelper instance = null;
 
-	public static TemplateHelper getInstance() {
-	    if (instance == null) {
-	        instance = new TemplateHelper();
-	    }
-	    return instance;
-	}
+    public static TemplateHelper getInstance() {
+        if (instance == null) {
+            instance = new TemplateHelper();
+        }
+        return instance;
+    }
 
-	public static String processFile(final String file,
-			final Map<String, Object> args) {
-		Writer out = null;
-		try {
-			final TemplateHelper th = getInstance();
-			if (cfg == null) {
-				cfg = new Configuration();
-				cfg.setDirectoryForTemplateLoading(new File(th.getTemplateDir()));
-			}
-			final Template ftl = th.load(file + ".ftl");
-			final StringWriter sw = new StringWriter();
-			out = new java.io.BufferedWriter(sw);
-			args.put("configuration", new FTLGetConfiguration());
-			ftl.process(args, out);
-			return sw.getBuffer().toString();
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (final IOException e) {
-				}
-			}
-		}
-	}
+    public static String processFile(final String file,
+            final Map<String, Object> args) {
+        Writer out = null;
+        try {
+            final TemplateHelper th = getInstance();
+            if (cfg == null) {
+                cfg = new Configuration();
+                cfg.setDirectoryForTemplateLoading(new File(th.getTemplateDir()));
+            }
+            final Template ftl = th.load(file + ".ftl");
+            final StringWriter sw = new StringWriter();
+            out = new java.io.BufferedWriter(sw);
+            args.put("configuration", new FTLGetConfiguration());
+            ftl.process(args, out);
+            return sw.getBuffer().toString();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (final IOException e) {
+                }
+            }
+        }
+    }
 
-	private Map<String, String> operations;
-
-	/**
-	 * Getter for where execution log should be written
-	 *
-	 * @return logDir
-	 */
-	public String getLogDir() {
-	    return logDir;
-	}
+    /**
+     * Getter for where execution log should be written
+     *
+     * @return logDir
+     */
+    public String getLogDir() {
+        return logDir;
+    }
 
     /**
      * Setter for where execution log should be written.
@@ -106,14 +100,14 @@ public class TemplateHelper {
         this.logDir = logDir;
     }
 
-	/**
-	 * Getter for file system path of the directory where template are kept.
-	 *
-	 * @return file system path
-	 */
-	public String getTemplateDir() {
-	    return templateDir;
-	}
+    /**
+     * Getter for file system path of the directory where template are kept.
+     *
+     * @return file system path
+     */
+    public String getTemplateDir() {
+        return templateDir;
+    }
 
     /**
      * Setter for file system path of the directory where templates are kept.
@@ -124,15 +118,15 @@ public class TemplateHelper {
         this.templateDir = templateDir;
     }
 
-	/**
-	 * getter for file system path of the directory where temporary scripts file
-	 * should be generated for execution
-	 *
-	 * @return file system path of the directory
-	 */
-	public String getWorkDir() {
-	    return workDir;
-	}
+    /**
+     * getter for file system path of the directory where temporary scripts file
+     * should be generated for execution
+     *
+     * @return file system path of the directory
+     */
+    public String getWorkDir() {
+        return workDir;
+    }
 
     /**
      * getter for file system path of the directory where temporary scripts file
@@ -144,17 +138,17 @@ public class TemplateHelper {
         this.workDir = workDir;
     }
 
-	/**
-	 * load a ftl file
-	 *
-	 * @param name
-	 * @return
-	 */
-	public Template load(final String name) {
-		try {
-			return cfg.getTemplate(name);
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    /**
+     * load a ftl file
+     *
+     * @param name
+     * @return
+     */
+    public Template load(final String name) {
+        try {
+            return cfg.getTemplate(name);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

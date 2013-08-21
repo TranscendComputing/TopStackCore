@@ -26,7 +26,6 @@ import org.dasein.cloud.network.Firewall;
 import org.dasein.cloud.network.FirewallRule;
 import org.dasein.cloud.network.FirewallSupport;
 import org.dasein.cloud.network.NetworkServices;
-import org.dasein.cloud.openstack.nova.os.NovaException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 

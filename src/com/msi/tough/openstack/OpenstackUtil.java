@@ -90,7 +90,7 @@ public class OpenstackUtil {
 				get.setQueryString(parameters);
 			}
 			final HttpClient client = new HttpClient();
-			final int resultCode = client.executeMethod(get);
+			client.executeMethod(get);
 			return get.getResponseBodyAsString();
 		} finally {
 			if (get != null) {
@@ -119,7 +119,7 @@ public class OpenstackUtil {
 				post.setRequestBody(json);
 			}
 			final HttpClient client = new HttpClient();
-			final int resultCode = client.executeMethod(post);
+			client.executeMethod(post);
 			return post.getResponseBodyAsString();
 		} finally {
 			if (post != null) {

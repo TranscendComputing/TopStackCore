@@ -42,28 +42,6 @@ public class DescribeSecurityGroup extends BaseProvider {
 	public CFType create0(final CallStruct call) throws Exception {
 		final SecurityGroupType ret = new SecurityGroupType();
 		final String name = call.getName();
-		// final AccountType ac = call.getAc();
-		// ret.setName(call.getName());
-		// String avZone = (String)
-		// call.getProperty(Constants.AVAILABILITYZONE);
-		// if (avZone == null) {
-		// avZone = ac.getDefZone();
-		// }
-		// final BasicAWSCredentials cred = new BasicAWSCredentials(
-		// ac.getAccessKey(), ac.getSecretKey());
-		// final AmazonEC2Client ec2 = new AmazonEC2Client(cred);
-		// final String endpoint = (String) ConfigurationUtil
-		// .getConfiguration(Arrays.asList(new String[] { "EC2_URL",
-		// avZone }));
-		// ec2.setEndpoint(endpoint);
-		//
-		// final DescribeSecurityGroupsRequest req = new
-		// DescribeSecurityGroupsRequest();
-		// req.setGroupNames(Arrays.asList(name));
-		// final DescribeSecurityGroupsResult res = ec2
-		// .describeSecurityGroups(req);
-		// if (res.getSecurityGroups().size() > 0) {
-		// final SecurityGroup g = res.getSecurityGroups().get(0);
 		final CloudProvider cloudProvider = call.getCloudProvider();
 		final NetworkServices network = cloudProvider.getNetworkServices();
 		final FirewallSupport firewall = network.getFirewallSupport();
