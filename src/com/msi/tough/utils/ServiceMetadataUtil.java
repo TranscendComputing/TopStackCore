@@ -19,5 +19,6 @@ import javax.servlet.ServletConfig;
 
 public interface ServiceMetadataUtil {
 
-    public void populateServiceMetadata(final ServletConfig config, String serviceName);
+    public void populateServiceMetadata(final ServletConfig config,
+            String serviceName);
 }
