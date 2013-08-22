@@ -126,6 +126,11 @@ public class ASGroupBean {
         return id;
     }
 
+    /**
+     * Deprecated; use 1-to-many relation instead.
+     * @return
+     */
+    @Deprecated
     public String getInstances() {
         return instances;
     }
@@ -214,6 +219,11 @@ public class ASGroupBean {
         this.id = id;
     }
 
+    /**
+     * Deprecated; use 1-to-many relation instead.
+     * @return
+     */
+    @Deprecated
     public void setInstances(final String instances) {
         this.instances = instances;
     }

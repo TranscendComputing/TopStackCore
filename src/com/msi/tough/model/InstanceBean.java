@@ -26,6 +26,7 @@ package com.msi.tough.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,7 +63,7 @@ public class InstanceBean {
     private long launchConfigId;
     private String health;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "as_group_id", nullable = true)
     private ASGroupBean asGroup;
 
