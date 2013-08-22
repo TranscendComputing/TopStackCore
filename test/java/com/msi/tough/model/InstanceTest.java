@@ -84,6 +84,7 @@ public class InstanceTest {
             InstanceBean ret = (InstanceBean) query.uniqueResult();
             assertNotNull(ret);
             assertNotNull(ret.getAsGroup());
+            assertEquals(asGroup.getId(), ret.getAsGroup().getId());
         } finally {
             session.close();
         }

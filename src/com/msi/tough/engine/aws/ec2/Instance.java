@@ -51,6 +51,7 @@ import com.msi.tough.engine.core.BaseProvider;
 import com.msi.tough.engine.core.CallStruct;
 import com.msi.tough.engine.resource.Resource;
 import com.msi.tough.engine.utils.InstanceUtils;
+import com.msi.tough.model.ASGroupBean;
 import com.msi.tough.model.InstanceBean;
 import com.msi.tough.query.ErrorResponse;
 import com.msi.tough.utils.CFUtil;
@@ -308,6 +309,11 @@ public class Instance extends BaseProvider implements Constants {
             call.setResourcesBean(CFUtil.updatePhysicalId(getResourceBeanId(),
                     instanceId));
         }
+        Long asGroupId = null;
+        Object o = call.getProperty(AUTOSCALEGROUPID);
+        if (o != null) {
+            asGroupId = Long.parseLong(""+o);
+        }
 
         final long ibid = HibernateUtil.withNewSession(new Operation<Long>() {
 
@@ -323,10 +329,16 @@ public class Instance extends BaseProvider implements Constants {
                 ib.setStatus("Pending");
                 ib.setHealth("Unhealthy");
                 ib.setInstanceId(ins.getPhysicalId());
+                ASGroupBean asGroup = null;
+                Long asGroupId = (Long) args[0];
+                if (asGroupId != null) {
+                    asGroup = (ASGroupBean) s.get(ASGroupBean.class, asGroupId);
+                    ib.setAsGroup(asGroup);
+                }
                 s.save(ib);
                 return ib.getId();
             }
-        });
+        }, asGroupId);
         logger.info("instance status=Pending");
 
         logger.info("instance updated in ELB " + ins.getInstanceId());
@@ -347,13 +359,13 @@ public class Instance extends BaseProvider implements Constants {
         final int retrycnt = retry == null ? 1 : Integer.parseInt(retry);
         for (int a = 0; a < retrycnt; a++) {
             vm = vmSupport.getVirtualMachine(instanceId);
-            if (vm.getPrivateIpAddresses() != null
-                    && vm.getPrivateIpAddresses().length > 0) {
-                pvtip = vm.getPrivateIpAddresses()[0];
+            if (vm.getPrivateAddresses() != null
+                    && vm.getPrivateAddresses().length > 0) {
+                pvtip = vm.getPrivateAddresses()[0].getIpAddress();
             }
-            if (vm.getPublicIpAddresses() != null
-                    && vm.getPublicIpAddresses().length > 0) {
-                publicIp = vm.getPublicIpAddresses()[0];
+            if (vm.getPublicAddresses() != null
+                    && vm.getPublicAddresses().length > 0) {
+                publicIp = vm.getPublicAddresses()[0].getIpAddress();
             }
             if (pvtip == null
                     || pvtip.length() == 0
@@ -380,12 +392,12 @@ public class Instance extends BaseProvider implements Constants {
             final IpAddressSupport ipsupport = network.getIpAddressSupport();
             publicIpId = ipsupport.request(IPVersion.IPV4);
             final IpAddress addrs = ipsupport.getIpAddress(publicIpId);
-            publicIp = addrs.getAddress();
+            publicIp = addrs.getRawAddress().getIpAddress();
             ipsupport.assign(publicIpId, instanceId);
             ins.setPublicIp(publicIp);
         } else {
             vm = vmSupport.getVirtualMachine(instanceId);
-            publicIp = vm.getPublicIpAddresses()[0];
+            publicIp = vm.getPublicAddresses()[0].getIpAddress();
         }
         final String publicIpId0 = publicIpId;
         final String publicIp0 = publicIp;

@@ -19,6 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public interface Action {
+
+    /** Generic return, if an action has no concrete type to return */
+    public static final String ACTION_SUCCESS = "DONE";
+
+    /** Generic error return, if an action has no specific failure to report. */
+    public static final String ACTION_FAIL = "FAIL";
+
     public void process(final HttpServletRequest req,
             final HttpServletResponse resp) throws Exception;
 }

@@ -54,6 +54,7 @@ public class QueryBuilder {
     private static final String GREATER = ">";
     private static final String GREATER_OR_EQUAL = ">=";
     private static final String LIKE = "%";
+    private static final String NOT_EQUAL = "<>";
 
     public QueryBuilder() {
         super();
@@ -190,6 +191,22 @@ public class QueryBuilder {
         ensureWhere();
         return equals(name, value, false);
     }
+
+    /**
+     * Add an "not equal" clause for a single value or a collection ("in").
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    public QueryBuilder notEqual(String name, Object value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Null is not a valid value.");
+        }
+        and(name, addParameter(value), value, GREATER);
+        return this;
+    }
+
 
     /**
      * This method will append an equal param if the value is not null. If the
