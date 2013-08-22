@@ -131,6 +131,16 @@ public class Appctx {
         return LoggerFactory.getLogger(name);
     }
 
+    /**
+     * Get a logger for a name
+     *
+     * @param name
+     * @return logger
+     */
+    public static Logger getLogger(final Class<?> clazz) {
+        return LoggerFactory.getLogger(clazz.getName());
+    }
+
     public static Object getThreadMap(final String key) {
         final Map<String, Object> m = threadMap.get();
         if (m == null) {

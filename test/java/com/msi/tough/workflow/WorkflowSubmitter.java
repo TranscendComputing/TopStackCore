@@ -49,9 +49,6 @@ public class WorkflowSubmitter {
     @Resource
     AsyncServiceImpl asyncService = null;
 
-    @Resource
-    MuleIgniter workflowIgniter = null;
-
     /**
      * Submit a workflow task and wait for response.
      *
@@ -71,7 +68,6 @@ public class WorkflowSubmitter {
             int timeout) throws Exception {
         ServiceRequestContext context = new ServiceRequestContext();
         context.setAction("Unspecified");
-        workflowIgniter.init(); // ensure workflow is initialized.
         ResponseListener listener = new ResponseListener(timeout);
         listener.registerForResponse(asyncService);
         workflow.doWork(requestMessage, context);
