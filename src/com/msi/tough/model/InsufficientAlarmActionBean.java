@@ -20,7 +20,6 @@ import javax.persistence.Entity;
 
 import com.msi.tough.model.monitor.AlarmActionBean;
 
-
 @Entity
 @DiscriminatorValue("InsufficientAlarmAction")
 public class InsufficientAlarmActionBean extends AlarmActionBean {

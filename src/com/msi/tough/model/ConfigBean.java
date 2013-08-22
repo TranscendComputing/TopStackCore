@@ -37,58 +37,58 @@ import javax.persistence.Table;
  * fields are maintained:
  * <li>id: database generated recored id</li>
  * </p>
- * 
+ *
  * @author raj
- * 
+ *
  */
 @Entity
 @Table(name = "config")
 public class ConfigBean {
-	//TODO add parent relationship back to ConfigTemplateBean
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    // TODO add parent relationship back to ConfigTemplateBean
 
-	@Column(name = "name_space")
-	private String nameSpace;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-	@Column(name = "opt")
-	private String option;
+    @Column(name = "name_space")
+    private String nameSpace;
 
-	@Column(name = "val")
-	private String value;
+    @Column(name = "opt")
+    private String option;
 
-	public long getId() {
-		return id;
-	}
+    @Column(name = "val")
+    private String value;
 
-	public String getNameSpace() {
-		return nameSpace;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getOption() {
-		return option;
-	}
+    public String getNameSpace() {
+        return nameSpace;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getOption() {
+        return option;
+    }
 
-	public void setId(final long id) {
-		this.id = id;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setNameSpace(final String nameSpace) {
-		this.nameSpace = nameSpace;
-	}
+    public void setId(final long id) {
+        this.id = id;
+    }
 
-	public void setOption(final String option) {
-		this.option = option;
-	}
+    public void setNameSpace(final String nameSpace) {
+        this.nameSpace = nameSpace;
+    }
 
-	public void setValue(final String value) {
-		this.value = value;
-	}
+    public void setOption(final String option) {
+        this.option = option;
+    }
+
+    public void setValue(final String value) {
+        this.value = value;
+    }
 
 }

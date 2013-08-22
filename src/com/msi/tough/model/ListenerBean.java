@@ -43,112 +43,112 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "listener")
 public class ListenerBean {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	private long instancePort;
-	private long loadBalancerPort;
-	private String protocol;
-	private String policyNames;
-	private String sslCertificateId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private long instancePort;
+    private long loadBalancerPort;
+    private String protocol;
+    private String policyNames;
+    private String sslCertificateId;
 
-	/**
-	 * get database record id
-	 *
-	 * @return
-	 */
-	public long getId() {
-		return id;
-	}
+    /**
+     * get database record id
+     *
+     * @return
+     */
+    public long getId() {
+        return id;
+    }
 
-	/**
-	 * get instance port
-	 *
-	 * @return
-	 */
-	public long getInstancePort() {
-		return instancePort;
-	}
+    /**
+     * get instance port
+     *
+     * @return
+     */
+    public long getInstancePort() {
+        return instancePort;
+    }
 
-	/**
-	 * get loadbalancer port
-	 *
-	 * @return
-	 */
-	public long getLoadBalancerPort() {
-		return loadBalancerPort;
-	}
+    /**
+     * get loadbalancer port
+     *
+     * @return
+     */
+    public long getLoadBalancerPort() {
+        return loadBalancerPort;
+    }
 
-	public String getPolicyNames() {
-		return policyNames;
-	}
+    public String getPolicyNames() {
+        return policyNames;
+    }
 
-	/**
-	 * get protocol
-	 *
-	 * @return
-	 */
-	public String getProtocol() {
-		return protocol;
-	}
+    /**
+     * get protocol
+     *
+     * @return
+     */
+    public String getProtocol() {
+        return protocol;
+    }
 
-	public String getSslCertificateId() {
-		return sslCertificateId;
-	}
+    public String getSslCertificateId() {
+        return sslCertificateId;
+    }
 
-	/**
-	 * set database id; used by hibernate
-	 *
-	 * @param id
-	 */
-	public void setId(final long id) {
-		this.id = id;
-	}
+    /**
+     * set database id; used by hibernate
+     *
+     * @param id
+     */
+    public void setId(final long id) {
+        this.id = id;
+    }
 
-	/**
-	 * set instance port
-	 *
-	 * @param instancePort
-	 */
-	public void setInstancePort(final long instancePort) {
-		this.instancePort = instancePort;
-	}
+    /**
+     * set instance port
+     *
+     * @param instancePort
+     */
+    public void setInstancePort(final long instancePort) {
+        this.instancePort = instancePort;
+    }
 
-	/**
-	 * set load balancer port
-	 *
-	 * @param loadBalancerPort
-	 */
-	public void setLoadBalancerPort(final long loadBalancerPort) {
-		this.loadBalancerPort = loadBalancerPort;
-	}
+    /**
+     * set load balancer port
+     *
+     * @param loadBalancerPort
+     */
+    public void setLoadBalancerPort(final long loadBalancerPort) {
+        this.loadBalancerPort = loadBalancerPort;
+    }
 
-	public void setPolicyNames(final String policyNames) {
-		this.policyNames = policyNames;
-	}
+    public void setPolicyNames(final String policyNames) {
+        this.policyNames = policyNames;
+    }
 
-	/**
-	 * set protocol
-	 *
-	 * @param protocol
-	 */
-	public void setProtocol(final String protocol) {
-		this.protocol = protocol;
-	}
+    /**
+     * set protocol
+     *
+     * @param protocol
+     */
+    public void setProtocol(final String protocol) {
+        this.protocol = protocol;
+    }
 
-	public void setSslCertificateId(final String sslCertificateId) {
-		this.sslCertificateId = sslCertificateId;
-	}
+    public void setSslCertificateId(final String sslCertificateId) {
+        this.sslCertificateId = sslCertificateId;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "'id':" + id + ", 'protocol':" + protocol + ", 'instancePort':"
-				+ instancePort + ", 'loadBalancerPort':" + loadBalancerPort
-				+ ", 'sslCertificateId':" + sslCertificateId;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "'id':" + id + ", 'protocol':" + protocol + ", 'instancePort':"
+                + instancePort + ", 'loadBalancerPort':" + loadBalancerPort
+                + ", 'sslCertificateId':" + sslCertificateId;
+    }
 }

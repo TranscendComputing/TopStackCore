@@ -27,57 +27,57 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "queue")
 public class QueueBean {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	
-	@Column(name = "acctId")
-	private long accountId;	//Set Manually in createQueue (Hard Coded)
-	
-	@Column(name = "name")
-	private String name;
-	
-	@Column(name = "QueueURL")
-	private String queueURL;
-	
-	@Column(name = "QueueCreatedTimestamp")
-	long timeCreated;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-	public long getId() {
-		return id;
-	}
+    @Column(name = "acctId")
+    private long accountId; // Set Manually in createQueue (Hard Coded)
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    @Column(name = "name")
+    private String name;
 
-	public long getAccountId() {
-		return accountId;
-	}
-	
-	public String getQueueURL() {
-		return queueURL;
-	}
-	
-	public long getQueueCreatedTimestamp() {
-		Calendar cal = Calendar.getInstance();
-		timeCreated = (long) (cal.getTimeInMillis()/1000.0);
-		return timeCreated;
-	}
+    @Column(name = "QueueURL")
+    private String queueURL;
 
-	public void setAccountId(long accountId) {
-		this.accountId = accountId;
-	}
+    @Column(name = "QueueCreatedTimestamp")
+    long timeCreated;
 
-	public String getName() {
-		return name;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public void setQueueURL(String URL) {
-		this.queueURL = URL;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getAccountId() {
+        return accountId;
+    }
+
+    public String getQueueURL() {
+        return queueURL;
+    }
+
+    public long getQueueCreatedTimestamp() {
+        Calendar cal = Calendar.getInstance();
+        timeCreated = (long) (cal.getTimeInMillis() / 1000.0);
+        return timeCreated;
+    }
+
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setQueueURL(String URL) {
+        this.queueURL = URL;
+    }
 }

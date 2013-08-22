@@ -45,167 +45,167 @@ import javax.persistence.Table;
  * fields are maintained:
  * <li>id: database generated recored id</li>
  * </p>
- * 
+ *
  * @author raj
- * 
+ *
  */
 @Entity
 @Table(name = "template")
 public class ConfigTemplateBean {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-	@Column(name = "user_id")
-	private long userId;
+    @Column(name = "user_id")
+    private long userId;
 
-	@Column(name = "app_name")
-	private String applicationName;
-	
-	@Column(name = "name")
-	private String name;
+    @Column(name = "app_name")
+    private String applicationName;
 
-	@Column(name = "stack")
-	private String stack;
+    @Column(name = "name")
+    private String name;
 
-	@Column(name = "env_id")
-	private String envId;
+    @Column(name = "stack")
+    private String stack;
 
-	@Column(name = "env_name")
-	private String envName;
-	
-	@Column(name = "description")
-	private String desc;
+    @Column(name = "env_id")
+    private String envId;
 
-	//TODO many to one relationship with the parent (ApplicationBean) needed
-	@Column(name = "src_app_name")
-	private String srcAppName;
+    @Column(name = "env_name")
+    private String envName;
 
-	@Column(name = "src_template")
-	private String srcTemplate;
+    @Column(name = "description")
+    private String desc;
 
-	@Column(name = "created_time")
-	private Date createdTime;
+    // TODO many to one relationship with the parent (ApplicationBean) needed
+    @Column(name = "src_app_name")
+    private String srcAppName;
 
-	@Column(name = "updated_time")
-	private Date updatedTime;
+    @Column(name = "src_template")
+    private String srcTemplate;
 
-	private String deployStatus;
+    @Column(name = "created_time")
+    private Date createdTime;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "template_configs", joinColumns = @JoinColumn(name = "template_id"), inverseJoinColumns = @JoinColumn(name = "config_id"))
-	private Set<ConfigBean> configs;
+    @Column(name = "updated_time")
+    private Date updatedTime;
 
-	public Set<ConfigBean> getConfigs() {
-		return configs;
-	}
+    private String deployStatus;
 
-	public Date getCreatedTime() {
-		return createdTime;
-	}
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "template_configs", joinColumns = @JoinColumn(name = "template_id"), inverseJoinColumns = @JoinColumn(name = "config_id"))
+    private Set<ConfigBean> configs;
 
-	public String getDeployStatus() {
-		return deployStatus;
-	}
+    public Set<ConfigBean> getConfigs() {
+        return configs;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public Date getCreatedTime() {
+        return createdTime;
+    }
 
-	public String getEnvId() {
-		return envId;
-	}
+    public String getDeployStatus() {
+        return deployStatus;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public String getDesc() {
+        return desc;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getEnvId() {
+        return envId;
+    }
 
-	public String getSrcAppName() {
-		return srcAppName;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getSrcTemplate() {
-		return srcTemplate;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getStack() {
-		return stack;
-	}
+    public String getSrcAppName() {
+        return srcAppName;
+    }
 
-	public Date getUpdatedTime() {
-		return updatedTime;
-	}
-	
-	public long getUserId() {
-		return userId;
-	}
+    public String getSrcTemplate() {
+        return srcTemplate;
+    }
 
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
+    public String getStack() {
+        return stack;
+    }
 
-	public String getApplicationName() {
-		return applicationName;
-	}
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
 
-	public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
+    public long getUserId() {
+        return userId;
+    }
 
-	public String getEnvName() {
-		return envName;
-	}
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 
-	public void setEnvName(String envName) {
-		this.envName = envName;
-	}
-	
-	public void setConfigs(final Set<ConfigBean> configs) {
-		this.configs = configs;
-	}
+    public String getApplicationName() {
+        return applicationName;
+    }
 
-	public void setCreatedTime(final Date createdTime) {
-		this.createdTime = createdTime;
-	}
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 
-	public void setDeployStatus(final String deployStatus) {
-		this.deployStatus = deployStatus;
-	}
+    public String getEnvName() {
+        return envName;
+    }
 
-	public void setDesc(final String desc) {
-		this.desc = desc;
-	}
+    public void setEnvName(String envName) {
+        this.envName = envName;
+    }
 
-	public void setEnvId(final String envId) {
-		this.envId = envId;
-	}
+    public void setConfigs(final Set<ConfigBean> configs) {
+        this.configs = configs;
+    }
 
-	public void setId(final long id) {
-		this.id = id;
-	}
+    public void setCreatedTime(final Date createdTime) {
+        this.createdTime = createdTime;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setDeployStatus(final String deployStatus) {
+        this.deployStatus = deployStatus;
+    }
 
-	public void setSrcAppName(final String srcAppName) {
-		this.srcAppName = srcAppName;
-	}
+    public void setDesc(final String desc) {
+        this.desc = desc;
+    }
 
-	public void setSrcTemplate(final String srcTemplate) {
-		this.srcTemplate = srcTemplate;
-	}
+    public void setEnvId(final String envId) {
+        this.envId = envId;
+    }
 
-	public void setStack(final String stack) {
-		this.stack = stack;
-	}
+    public void setId(final long id) {
+        this.id = id;
+    }
 
-	public void setUpdatedTime(final Date updatedTime) {
-		this.updatedTime = updatedTime;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setSrcAppName(final String srcAppName) {
+        this.srcAppName = srcAppName;
+    }
+
+    public void setSrcTemplate(final String srcTemplate) {
+        this.srcTemplate = srcTemplate;
+    }
+
+    public void setStack(final String stack) {
+        this.stack = stack;
+    }
+
+    public void setUpdatedTime(final Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
 
 }

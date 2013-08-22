@@ -45,102 +45,102 @@ import javax.persistence.Table;
  * fields are maintained:
  * <li>id: database generated recored id</li>
  * </p>
- * 
+ *
  * @author raj
- * 
+ *
  */
 @Entity
 @Table(name = "application")
 public class ApplicationBean {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-	@Column(name = "user_id")
-	private long userId;
+    @Column(name = "user_id")
+    private long userId;
 
-	@Column(name = "name")
-	private String name;
+    @Column(name = "name")
+    private String name;
 
-	@Column(name = "description")
-	private String desc;
+    @Column(name = "description")
+    private String desc;
 
-	@Column(name = "created_time")
-	private Date createdTime;
+    @Column(name = "created_time")
+    private Date createdTime;
 
-	@Column(name = "updated_time")
-	private Date updatedTime;
+    @Column(name = "updated_time")
+    private Date updatedTime;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "app_versions", joinColumns = @JoinColumn(name = "application_id"), inverseJoinColumns = @JoinColumn(name = "version_id"))
-	private Set<VersionBean> versions;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "app_versions", joinColumns = @JoinColumn(name = "application_id"), inverseJoinColumns = @JoinColumn(name = "version_id"))
+    private Set<VersionBean> versions;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "app_templates", joinColumns = @JoinColumn(name = "application_id"), inverseJoinColumns = @JoinColumn(name = "template_id"))
-	private Set<ConfigTemplateBean> templates;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "app_templates", joinColumns = @JoinColumn(name = "application_id"), inverseJoinColumns = @JoinColumn(name = "template_id"))
+    private Set<ConfigTemplateBean> templates;
 
-	public Date getCreatedTime() {
-		return createdTime;
-	}
+    public Date getCreatedTime() {
+        return createdTime;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public String getDesc() {
+        return desc;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Set<ConfigTemplateBean> getTemplates() {
-		return templates;
-	}
+    public Set<ConfigTemplateBean> getTemplates() {
+        return templates;
+    }
 
-	public Date getUpdatedTime() {
-		return updatedTime;
-	}
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
 
-	public long getUserId() {
-		return userId;
-	}
+    public long getUserId() {
+        return userId;
+    }
 
-	public Set<VersionBean> getVersions() {
-		return versions;
-	}
+    public Set<VersionBean> getVersions() {
+        return versions;
+    }
 
-	public void setCreatedTime(final Date createdTime) {
-		this.createdTime = createdTime;
-	}
+    public void setCreatedTime(final Date createdTime) {
+        this.createdTime = createdTime;
+    }
 
-	public void setDesc(final String desc) {
-		this.desc = desc;
-	}
+    public void setDesc(final String desc) {
+        this.desc = desc;
+    }
 
-	public void setId(final long id) {
-		this.id = id;
-	}
+    public void setId(final long id) {
+        this.id = id;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setTemplates(final Set<ConfigTemplateBean> templates) {
-		this.templates = templates;
-	}
+    public void setTemplates(final Set<ConfigTemplateBean> templates) {
+        this.templates = templates;
+    }
 
-	public void setUpdatedTime(final Date updatedTime) {
-		this.updatedTime = updatedTime;
-	}
+    public void setUpdatedTime(final Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
 
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 
-	public void setVersions(final Set<VersionBean> versions) {
-		this.versions = versions;
-	}
+    public void setVersions(final Set<VersionBean> versions) {
+        this.versions = versions;
+    }
 
 }

@@ -27,115 +27,115 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "as_scheduled")
 public class ASScheduledBean {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-	@Column(name = "user_id")
-	private long userId;
+    @Column(name = "user_id")
+    private long userId;
 
-	@Column(name = "name")
-	private String Name;
+    @Column(name = "name")
+    private String Name;
 
-	@Column(name = "grp_name")
-	private String grpName;
+    @Column(name = "grp_name")
+    private String grpName;
 
-	@Column(name = "capacity")
-	private int capacity;
+    @Column(name = "capacity")
+    private int capacity;
 
-	@Column(name = "min_size")
-	private int minSize;
+    @Column(name = "min_size")
+    private int minSize;
 
-	@Column(name = "max_size")
-	private int maxSize;
+    @Column(name = "max_size")
+    private int maxSize;
 
-	@Column(name = "start_time")
-	private Date startTime;
+    @Column(name = "start_time")
+    private Date startTime;
 
-	@Column(name = "end_time")
-	private Date endTime;
+    @Column(name = "end_time")
+    private Date endTime;
 
-	@Column(name = "recurrence")
-	private String recurrence;
+    @Column(name = "recurrence")
+    private String recurrence;
 
-	public int getCapacity() {
-		return capacity;
-	}
+    public int getCapacity() {
+        return capacity;
+    }
 
-	public Date getEndTime() {
-		return endTime;
-	}
+    public Date getEndTime() {
+        return endTime;
+    }
 
-	public String getGrpName() {
-		return grpName;
-	}
+    public String getGrpName() {
+        return grpName;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public int getMaxSize() {
-		return maxSize;
-	}
+    public int getMaxSize() {
+        return maxSize;
+    }
 
-	public int getMinSize() {
-		return minSize;
-	}
+    public int getMinSize() {
+        return minSize;
+    }
 
-	public String getName() {
-		return Name;
-	}
+    public String getName() {
+        return Name;
+    }
 
-	public String getRecurrence() {
-		return recurrence;
-	}
+    public String getRecurrence() {
+        return recurrence;
+    }
 
-	public Date getStartTime() {
-		return startTime;
-	}
+    public Date getStartTime() {
+        return startTime;
+    }
 
-	public long getUserId() {
-		return userId;
-	}
+    public long getUserId() {
+        return userId;
+    }
 
-	public void setCapacity(final int capacity) {
-		this.capacity = capacity;
-	}
+    public void setCapacity(final int capacity) {
+        this.capacity = capacity;
+    }
 
-	public void setEndTime(final Date endTime) {
-		this.endTime = endTime;
-	}
+    public void setEndTime(final Date endTime) {
+        this.endTime = endTime;
+    }
 
-	public void setGrpName(final String grpName) {
-		this.grpName = grpName;
-	}
+    public void setGrpName(final String grpName) {
+        this.grpName = grpName;
+    }
 
-	public void setId(final long id) {
-		this.id = id;
-	}
+    public void setId(final long id) {
+        this.id = id;
+    }
 
-	public void setMaxSize(final int maxSize) {
-		this.maxSize = maxSize;
-	}
+    public void setMaxSize(final int maxSize) {
+        this.maxSize = maxSize;
+    }
 
-	public void setMinSize(final int minSize) {
-		this.minSize = minSize;
-	}
+    public void setMinSize(final int minSize) {
+        this.minSize = minSize;
+    }
 
-	public void setName(final String name) {
-		Name = name;
-	}
+    public void setName(final String name) {
+        Name = name;
+    }
 
-	public void setRecurrence(final String recurrence) {
-		this.recurrence = recurrence;
-	}
+    public void setRecurrence(final String recurrence) {
+        this.recurrence = recurrence;
+    }
 
-	public void setStartTime(final Date startTime) {
-		this.startTime = startTime;
-	}
+    public void setStartTime(final Date startTime) {
+        this.startTime = startTime;
+    }
 
-	public void setUserId(final long userId) {
-		this.userId = userId;
-	}
+    public void setUserId(final long userId) {
+        this.userId = userId;
+    }
 
 }

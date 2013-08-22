@@ -28,60 +28,60 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "system_defaults")
 public class SystemDefaultsBean {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-	@Column(name = "type")
-	private String type;
+    @Column(name = "type")
+    private String type;
 
-	@Column(name = "key_name")
-	private String key;
+    @Column(name = "key_name")
+    private String key;
 
-	@Column(name = "key_value")
-	private String value;
+    @Column(name = "key_value")
+    private String value;
 
-	@Column(name = "def")
-	private Boolean def;
+    @Column(name = "def")
+    private Boolean def;
 
-	public Boolean getDef() {
-		return def;
-	}
+    public Boolean getDef() {
+        return def;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setDef(Boolean def) {
-		this.def = def;
-	}
+    public void setDef(Boolean def) {
+        this.def = def;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
 }

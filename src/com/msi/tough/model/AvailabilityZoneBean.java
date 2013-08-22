@@ -27,60 +27,60 @@ import javax.persistence.Table;
 @Table(name = "availability_zone")
 public class AvailabilityZoneBean {
 
-	@Id
-	@Column(name = "availability_zone")
-	private String availabilityZone;
+    @Id
+    @Column(name = "availability_zone")
+    private String availabilityZone;
 
-	@Column(name = "bak_window")
-	private String preferredBackupWindow;
+    @Column(name = "bak_window")
+    private String preferredBackupWindow;
 
-	@Column(name = "mntn_window")
-	private String preferredMaintenanceWindow;
+    @Column(name = "mntn_window")
+    private String preferredMaintenanceWindow;
 
-	@Column(name = "cloud_type")
-	private String cloudType;
+    @Column(name = "cloud_type")
+    private String cloudType;
 
-	@Column(name = "def")
-	private Boolean default_;
+    @Column(name = "def")
+    private Boolean default_;
 
-	public String getAvailabilityZone() {
-		return availabilityZone;
-	}
+    public String getAvailabilityZone() {
+        return availabilityZone;
+    }
 
-	public String getCloudType() {
-		return cloudType;
-	}
+    public String getCloudType() {
+        return cloudType;
+    }
 
-	public Boolean getDefault_() {
-		return default_;
-	}
+    public Boolean getDefault_() {
+        return default_;
+    }
 
-	public String getPreferredBackupWindow() {
-		return preferredBackupWindow;
-	}
+    public String getPreferredBackupWindow() {
+        return preferredBackupWindow;
+    }
 
-	public String getPreferredMaintenanceWindow() {
-		return preferredMaintenanceWindow;
-	}
+    public String getPreferredMaintenanceWindow() {
+        return preferredMaintenanceWindow;
+    }
 
-	public void setAvailabilityZone(String availabilityZone) {
-		this.availabilityZone = availabilityZone;
-	}
+    public void setAvailabilityZone(String availabilityZone) {
+        this.availabilityZone = availabilityZone;
+    }
 
-	public void setCloudType(String cloudType) {
-		this.cloudType = cloudType;
-	}
+    public void setCloudType(String cloudType) {
+        this.cloudType = cloudType;
+    }
 
-	public void setDefault_(Boolean default_) {
-		this.default_ = default_;
-	}
+    public void setDefault_(Boolean default_) {
+        this.default_ = default_;
+    }
 
-	public void setPreferredBackupWindow(String preferredBackupWindow) {
-		this.preferredBackupWindow = preferredBackupWindow;
-	}
+    public void setPreferredBackupWindow(String preferredBackupWindow) {
+        this.preferredBackupWindow = preferredBackupWindow;
+    }
 
-	public void setPreferredMaintenanceWindow(String preferredMaintenanceWindow) {
-		this.preferredMaintenanceWindow = preferredMaintenanceWindow;
-	}
+    public void setPreferredMaintenanceWindow(String preferredMaintenanceWindow) {
+        this.preferredMaintenanceWindow = preferredMaintenanceWindow;
+    }
 
 }

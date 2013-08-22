@@ -28,60 +28,60 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "azmap")
 public class AZMapBean {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-	@Column(name = "availability_zone")
-	private String availabilityZone;
+    @Column(name = "availability_zone")
+    private String availabilityZone;
 
-	@Column(name = "map_type")
-	private String mapType;
+    @Column(name = "map_type")
+    private String mapType;
 
-	@Column(name = "map_key")
-	private String mapKey;
+    @Column(name = "map_key")
+    private String mapKey;
 
-	@Column(name = "map_value")
-	private String mapValue;
+    @Column(name = "map_value")
+    private String mapValue;
 
-	public String getAvailabilityZone() {
-		return availabilityZone;
-	}
+    public String getAvailabilityZone() {
+        return availabilityZone;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getMapKey() {
-		return mapKey;
-	}
+    public String getMapKey() {
+        return mapKey;
+    }
 
-	public String getMapType() {
-		return mapType;
-	}
+    public String getMapType() {
+        return mapType;
+    }
 
-	public String getMapValue() {
-		return mapValue;
-	}
+    public String getMapValue() {
+        return mapValue;
+    }
 
-	public void setAvailabilityZone(String availabilityZone) {
-		this.availabilityZone = availabilityZone;
-	}
+    public void setAvailabilityZone(String availabilityZone) {
+        this.availabilityZone = availabilityZone;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setMapKey(String mapKey) {
-		this.mapKey = mapKey;
-	}
+    public void setMapKey(String mapKey) {
+        this.mapKey = mapKey;
+    }
 
-	public void setMapType(String mapType) {
-		this.mapType = mapType;
-	}
+    public void setMapType(String mapType) {
+        this.mapType = mapType;
+    }
 
-	public void setMapValue(String mapValue) {
-		this.mapValue = mapValue;
-	}
+    public void setMapValue(String mapValue) {
+        this.mapValue = mapValue;
+    }
 
 }
