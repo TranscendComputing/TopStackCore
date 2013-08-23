@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.msi.tough.core.Appctx;
+import com.msi.tough.workflow.WorkflowIgniter;
 
 /**
  * Programmatic instantiation of mule (for non-web contexts).
@@ -37,7 +38,7 @@ import com.msi.tough.core.Appctx;
  * @author jgardner
  *
  */
-public class MuleIgniter implements ApplicationContextAware {
+public class MuleIgniter implements ApplicationContextAware, WorkflowIgniter {
     private final Logger logger = Appctx
             .getLogger(MuleIgniter.class.getName());
 

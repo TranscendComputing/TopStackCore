@@ -26,7 +26,6 @@ import com.msi.tough.query.AsyncServiceImpl.ServiceResponseListener;
 import com.msi.tough.query.ErrorResponse;
 import com.msi.tough.query.ServiceRequestContext;
 import com.msi.tough.query.ServiceResponse;
-import com.msi.tough.workflow.core.MuleIgniter;
 import com.msi.tough.workflow.core.Workflow;
 
 /**
@@ -49,6 +48,9 @@ public class WorkflowSubmitter {
     @Resource
     AsyncServiceImpl asyncService = null;
 
+    @Resource
+    WorkflowIgniter workflowIgniter = null;
+
     /**
      * Submit a workflow task and wait for response.
      *
@@ -66,6 +68,7 @@ public class WorkflowSubmitter {
      */
     public <T extends Message,V> V submitAndWait(T requestMessage,
             int timeout) throws Exception {
+        workflowIgniter.init(); // ensure workflow is initialized.
         ServiceRequestContext context = new ServiceRequestContext();
         context.setAction("Unspecified");
         ResponseListener listener = new ResponseListener(timeout);
@@ -148,5 +151,9 @@ public class WorkflowSubmitter {
 
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+    public void setWorkflowIgniter(WorkflowIgniter workflowIgniter) {
+        this.workflowIgniter = workflowIgniter;
     }
 }

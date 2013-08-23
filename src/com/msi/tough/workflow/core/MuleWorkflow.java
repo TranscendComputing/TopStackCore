@@ -53,9 +53,6 @@ public class MuleWorkflow implements Workflow, MuleContextAware {
     @Resource
     private String rawEndpoint = "DirectToZMQEntry";
 
-    @Resource
-    MuleIgniter workflowIgniter = null;
-
     public MuleWorkflow() {
     }
 
@@ -72,11 +69,6 @@ public class MuleWorkflow implements Workflow, MuleContextAware {
     @Override
     public Message doWork(Message request, ServiceRequestContext context)
             throws ErrorResponse {
-        try {
-            workflowIgniter.init(); // ensure workflow is initialized.
-        } catch (Exception ex) {
-            throw new RuntimeException("Failed to start up workflow.", ex);
-        }
         try {
             MuleClient client = new MuleClient(muleContext);
             // Supply action name, if needed by endpoint.
