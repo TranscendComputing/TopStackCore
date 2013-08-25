@@ -16,16 +16,31 @@
 package com.msi.tough.model;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
+
+import com.msi.tough.core.QueryBuilder;
 
 @Entity
 @Table(name = "as_group")
+@FetchProfile(name = "group-with-instances", fetchOverrides = {
+        @FetchProfile.FetchOverride(entity = ASGroupBean.class, association = "scaledInstances", mode = FetchMode.JOIN)
+})
 public class ASGroupBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +80,9 @@ public class ASGroupBean {
     private String terminationPolicies;
 
     private String instances;
+
+    @OneToMany(mappedBy = "asGroup", cascade = { CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST }, fetch = FetchType.LAZY)
+    private Set<InstanceBean> scaledInstances;
 
     @Column(name = "stack_id")
     private String stackId;
@@ -133,6 +151,19 @@ public class ASGroupBean {
     @Deprecated
     public String getInstances() {
         return instances;
+    }
+
+    public Set<InstanceBean> getScaledInstances() {
+        return scaledInstances;
+    }
+
+    public List<InstanceBean> getScaledInstances(Session s) {
+        QueryBuilder builder = new QueryBuilder("from InstanceBean");
+        builder.equals("asGroup", this);
+        final Query query = builder.toQuery(s);
+        @SuppressWarnings("unchecked")
+        final List<InstanceBean> list = query.list();
+        return list;
     }
 
     public long getInstDel() {
@@ -226,6 +257,10 @@ public class ASGroupBean {
     @Deprecated
     public void setInstances(final String instances) {
         this.instances = instances;
+    }
+
+    public void setScaledInstances(Set<InstanceBean> scaledInstances) {
+        this.scaledInstances = scaledInstances;
     }
 
     public void setInstDel(final long instDel) {

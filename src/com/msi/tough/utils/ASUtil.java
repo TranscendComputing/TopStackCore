@@ -75,10 +75,10 @@ public class ASUtil {
     // return b;
     // }
 
-    public static List<String> deleteASGroup(final Session s,
+    public static List<InstanceBean> deleteASGroup(final Session s,
             final AccountBean ac, final ASGroupBean g) {
         if (g == null) {
-            return new ArrayList<String>();
+            return new ArrayList<InstanceBean>();
         }
         for (final ASPolicyBean i : readASPolicyForGroup(s, ac.getId(),
                 g.getName())) {
@@ -88,9 +88,9 @@ public class ASUtil {
                 g.getName())) {
             s.delete(i);
         }
-        final CommaObject insts = new CommaObject(g.getInstances());
+        final List<InstanceBean> insts = g.getScaledInstances(s);
         s.delete(g);
-        return insts.toList();
+        return insts;
     }
 
     public static void deregisterAutoScalingInstace(final Session s,
@@ -99,12 +99,14 @@ public class ASUtil {
         final InstanceBean ib = InstanceUtil.getInstance(s, instanceId);
         logger.debug("reading group");
         final ASGroupBean g = readASGroup(s, ac.getId(), grpName);
-        if (g.getInstances() == null) {
+        List<InstanceBean> instances = g.getScaledInstances(s);
+        if (instances == null || instances.size() == 0) {
             return;
         }
-        final CommaObject co = new CommaObject(g.getInstances());
-        co.remove(instanceId);
-        g.setInstances(co.toString());
+        if (ib == null || ib.getAsGroup() == null ||
+                ib.getAsGroup().getId() != g.getId()) {
+            return;
+        }
         logger.debug("saving grp");
         s.save(g);
         s.delete(ib);

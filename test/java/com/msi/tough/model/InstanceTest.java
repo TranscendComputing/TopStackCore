@@ -69,6 +69,7 @@ public class InstanceTest {
     public void testDependencies() throws Exception {
         final Session session = HibernateUtil.newSession();
         ASGroupBean asGroup = new ASGroupBean();
+        asGroup.setName(name1);
         InstanceBean instance = new InstanceBean();
         instance.setInstanceId(name1);
         instance.setLogicalId(name1);
@@ -79,7 +80,7 @@ public class InstanceTest {
             session.save(instance);
             tx.commit();
             QueryBuilder builder = new QueryBuilder("from InstanceBean");
-            builder.equals("logicalId", name1);
+            builder.equals("asGroup", asGroup);
             Query query = builder.toQuery(session);
             InstanceBean ret = (InstanceBean) query.uniqueResult();
             assertNotNull(ret);
@@ -92,16 +93,30 @@ public class InstanceTest {
 
     @After
     public void cleanUp() {
-        final Session session = HibernateUtil.newSession();
+        Session session = HibernateUtil.newSession();
         Transaction tx = session.beginTransaction();
         try {
             QueryBuilder builder = new QueryBuilder("from InstanceBean");
             builder.equals("instanceId", name1);
             Query query = builder.toQuery(session);
-            @SuppressWarnings("unchecked")
-            List<InstanceBean> ret = query.list();
-            for (InstanceBean ib : ret) {
-                session.delete(ib);
+            List<?> ret = query.list();
+            for (Object o : ret) {
+                session.delete(o);
+            }
+            tx.commit();
+        }
+        finally {
+            session.close();
+        }
+        session = HibernateUtil.newSession();
+        tx = session.beginTransaction();
+        try {
+            QueryBuilder builder = new QueryBuilder("from ASGroupBean");
+            builder.equals("name", name1);
+            Query query = builder.toQuery(session);
+            List<?> ret = query.list();
+            for (Object o : ret) {
+                session.delete(o);
             }
             tx.commit();
         }

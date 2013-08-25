@@ -63,7 +63,7 @@ public class InstanceBean {
     private long launchConfigId;
     private String health;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "as_group_id", nullable = true)
     private ASGroupBean asGroup;
 
