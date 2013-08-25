@@ -112,4 +112,13 @@ public class MuleWorkflow implements Workflow, MuleContextAware {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.msi.tough.workflow.core.Workflow#forgetWork(com.google.protobuf.Message, com.msi.tough.query.ServiceRequestContext)
+     */
+    @Override
+    public void forgetWork(Message request, ServiceRequestContext context) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

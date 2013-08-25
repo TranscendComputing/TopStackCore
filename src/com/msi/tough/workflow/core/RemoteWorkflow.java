@@ -145,6 +145,7 @@ public class RemoteWorkflow implements Workflow, Runnable {
     }
 
     public synchronized void destroy() {
+        logger.info("Shutting down remote workflow listener:" + recvEndpoint);
         if (zmqRecvSocket != null) {
             recvThread.interrupt();
         }
@@ -230,6 +231,14 @@ public class RemoteWorkflow implements Workflow, Runnable {
         throw new IllegalArgumentException("Raw not supported for remote.");
     }
 
+    /* (non-Javadoc)
+     * @see com.msi.tough.workflow.core.Workflow#forgetWork(com.google.protobuf.Message, com.msi.tough.query.ServiceRequestContext)
+     */
+    @Override
+    public void forgetWork(Message request, ServiceRequestContext context) {
+        logger.info("Forgetting about request:" + request);
+    }
+
     public static class UnexpectedTypeException extends ErrorResponse {
 
         /**
@@ -270,6 +279,5 @@ public class RemoteWorkflow implements Workflow, Runnable {
     public void setReturnAddress(String returnAddress) {
         this.returnAddress = returnAddress;
     }
-
 
 }

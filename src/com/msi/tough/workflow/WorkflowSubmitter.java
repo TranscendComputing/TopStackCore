@@ -74,10 +74,15 @@ public class WorkflowSubmitter {
         ResponseListener listener = new ResponseListener(timeout);
         listener.registerForResponse(asyncService);
         workflow.doWork(requestMessage, context);
-        @SuppressWarnings("unchecked")
-        V ret = (V) listener.waitForResponse();
-        listener.deregisterForResponse(asyncService);
-        return ret;
+        try {
+            @SuppressWarnings("unchecked")
+            V ret = (V) listener.waitForResponse();
+            return ret;
+        } catch (RuntimeException e) {
+            throw e;
+        } finally {
+            listener.deregisterForResponse(asyncService);
+        }
     }
 
     public class ResponseListener implements ServiceResponseListener {

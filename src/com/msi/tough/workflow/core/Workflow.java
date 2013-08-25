@@ -41,4 +41,12 @@ public interface Workflow {
      * @return
      */
     public void doWorkRaw(Object payload);
+
+    /**
+     * Discard the supplied request; the user is no longer waiting.
+     *
+     * @param request
+     */
+    public void forgetWork(Message request, ServiceRequestContext context);
+
 }
