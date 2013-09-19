@@ -426,7 +426,7 @@ public class ParameterGroupEntity {
 			newDefaultParamGroup.setDbparameterGroupName(defaultSystemGroup.getDbparameterGroupName());
 			newDefaultParamGroup.setDescription(defaultSystemGroup.getDescription());
 			
-			HibernateUtil.withSession(
+			HibernateUtil.withNewSession(
 					new HibernateUtil.Operation<Object>() {
 						@Override
 						public Object ex(final Session session,
@@ -436,7 +436,7 @@ public class ParameterGroupEntity {
 						}
 					});
 			
-			HibernateUtil.withSession(
+			HibernateUtil.withNewSession(
 					new HibernateUtil.Operation<Object>() {
 						@Override
 						public Object ex(final Session session,

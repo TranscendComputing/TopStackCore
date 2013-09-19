@@ -142,15 +142,10 @@ public class DBInstance extends BaseProvider {
                         .toList()) {
                     final RdsDbsecurityGroup dbSecGrp = RDSUtil
                             .getSecurityGroup(s, dbSecGrpName, at.getId());
-                    final CommaObject cdb = new CommaObject(dbSecGrp
-                            .getInternals());
-                    cdb.add(secGrp);
-                    dbSecGrp.setInternals(cdb.toString());
+                    dbSecGrp.addInternal(secGrp);
+                    
                     s.save(dbSecGrp);
-                    final CommaObject ci = new CommaObject(newGrp
-                            .getInternals());
-                    ci.add(dbSecGrpName);
-                    newGrp.setInternals(ci.toString());
+                    newGrp.addInternal(dbSecGrpName);
 
                     final AccountType daseinAt = new AccountType();
                     daseinAt.setAccessKey(ac.getApiUsername());
@@ -285,15 +280,11 @@ public class DBInstance extends BaseProvider {
                                     at.getId(), null, 0);
                     if (secGrpList != null && secGrpList.size() > 0) {
                         final RdsDbsecurityGroup secGrp = secGrpList.get(0);
-                        for (final String dbgrp : new CommaObject(secGrp
-                                .getInternals()).toList()) {
+                        for (final String dbgrp : secGrp.getscaledInternals()) {
                             final RdsDbsecurityGroup dbg = SecurityGroupEntity
                                     .selectAllSecurityGroups(s, dbgrp,
                                             at.getId(), null, 0).get(0);
-                            final CommaObject c = new CommaObject(dbg
-                                    .getInternals());
-                            c.remove(instanceSecGrp);
-                            dbg.setInternals(c.toString());
+                            dbg.removeInternal(instanceSecGrp);
                             s.save(dbg);
                         }
                         SecurityGroupEntity.deleteSecurityGroup(s, secGrp);

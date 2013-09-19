@@ -448,7 +448,7 @@ public class CFUtil {
             public void run() {
                 try {
                     HibernateUtil
-                            .withSession(new HibernateUtil.Operation<Object>() {
+                            .withNewSession(new HibernateUtil.Operation<Object>() {
 
                                 @Override
                                 public Object ex(final Session s,
@@ -653,7 +653,7 @@ public class CFUtil {
             @Override
             public void run() {
                 HibernateUtil
-                        .withSession(new HibernateUtil.Operation<Object>() {
+                        .withNewSession(new HibernateUtil.Operation<Object>() {
 
                             @Override
                             public Object ex(final Session s,
