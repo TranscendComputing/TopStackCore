@@ -114,13 +114,14 @@ public class AESSecurity {
     }
 
     private byte[] getDefaultPassword() {
-        if (systemPassword == null) {
+        if (this.systemPassword == null) {
             String systemPassword = Appctx.getBean("DB_PASSWORD");
             if (systemPassword == null) {
                 throw new NullPointerException(
                         "No install password can be found.");
             }
+            return systemPassword.getBytes(Charsets.UTF_8);
         }
-        return systemPassword.getBytes(Charsets.UTF_8);
+        return null;
     }
 }
