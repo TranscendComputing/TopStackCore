@@ -18,11 +18,17 @@ package com.msi.tough.utils;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.Reader;
+import java.security.KeyManagementException;
 import java.security.KeyPair;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,13 +41,21 @@ import javax.crypto.Cipher;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.bouncycastle.openssl.PEMReader;
 import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
@@ -51,7 +65,7 @@ import com.msi.tough.core.JsonUtil;
 
 /**
  * @author rarora
- * 
+ *
  */
 public class ChefUtil {
     private final static Logger logger = Appctx.getLogger(ChefUtil.class
@@ -59,9 +73,24 @@ public class ChefUtil {
     private static final String databagLockItem = "__databag__lock__";
     private static String databagLockedValue;
 
+    private String chefClientId = null;
+
+    private String privateKeyPath = null;
+
+    private String chefApiUrl = null;
+
+    private static ChefUtil _instance = null;
+
+    public static ChefUtil getInstance() {
+        if (_instance == null) {
+            _instance = new ChefUtil();
+        }
+        return _instance;
+    }
+
     /*
      * @param databagName String name for the databag to lock
-     * 
+     *
      * @returns boolean True if worked, False otherwise.
      */
     public static void beginDatabagUpdate(final String databagName)
@@ -139,12 +168,11 @@ public class ChefUtil {
 
     public static String executeJson(final String method,
             final String endpointPath, final String payload) throws Exception {
-        final String userId = Appctx.getConfigurationBean("CHEF_USER_ID");
+        final String userId = getInstance().getChefClientId();
         assert (userId != null);
-        final String privateKey = Appctx
-                .getConfigurationBean("CHEF_PRIVATE_KEY");
+        final String privateKey = getInstance().getPrivateKeyPath();
         assert (privateKey != null);
-        final String url = Appctx.getConfigurationBean("CHEF_API_URL");
+        final String url = getInstance().getChefApiUrl();
         assert (url != null);
         final Map<String, String> headers = new HashMap<String, String>();
         final SimpleDateFormat iso8601DateParser = new SimpleDateFormat(
@@ -176,7 +204,7 @@ public class ChefUtil {
         for (final Map.Entry<String, String> en : headers.entrySet()) {
             cmd.setHeader(en.getKey(), en.getValue());
         }
-        final DefaultHttpClient cl = new DefaultHttpClient();
+        final HttpClient cl = getInstance().getHttpClient();
         final HttpResponse res = cl.execute(cmd);
         final HttpEntity resen = res.getEntity();
         final InputStream resin = resen.getContent();
@@ -383,7 +411,7 @@ public class ChefUtil {
 
     /**
      * Creates a client and returns its private key
-     * 
+     *
      * @param name
      * @return private key
      * @throws Exception
@@ -409,5 +437,90 @@ public class ChefUtil {
                 lockFlag.toString());
 
         return dbag;
+    }
+
+    /**
+     * @return the http client to connect to chef server.
+     */
+    public HttpClient getHttpClient() {
+        HttpClient client = null;
+        TrustStrategy easyStrategy = new TrustStrategy() {
+
+            @Override
+            public boolean isTrusted(X509Certificate[] certificate, String authType)
+                    throws CertificateException {
+                return true;
+            }
+        };
+        try {
+
+            SSLSocketFactory sf = new SSLSocketFactory(easyStrategy,SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            SchemeRegistry registry = new SchemeRegistry();
+            registry.register(new Scheme("https", 443, sf));
+
+            ClientConnectionManager ccm = new PoolingClientConnectionManager(registry);
+            client = new DefaultHttpClient(ccm);
+
+        } catch (KeyManagementException e1) {
+            e1.printStackTrace();
+        } catch (UnrecoverableKeyException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchAlgorithmException e1) {
+            e1.printStackTrace();
+        } catch (KeyStoreException e1) {
+            e1.printStackTrace();
+        }
+        return client;
+    }
+
+    /**
+     * @return the chefClientId
+     */
+    public String getChefClientId() {
+        if (chefClientId == null) {
+            chefClientId = Appctx.getConfigurationBean("CHEF_USER_ID");
+        }
+        return chefClientId;
+    }
+
+    /**
+     * @return the privateKeyPath
+     */
+    public String getPrivateKeyPath() {
+        if (privateKeyPath == null) {
+            privateKeyPath = Appctx.getConfigurationBean("CHEF_PRIVATE_KEY");
+        }
+        return privateKeyPath;
+    }
+
+    /**
+     * @return the chefApiUrl
+     */
+    public String getChefApiUrl() {
+        if (chefApiUrl == null) {
+            chefApiUrl = Appctx.getConfigurationBean("CHEF_API_URL");
+        }
+        return chefApiUrl;
+    }
+
+    /**
+     * @param chefClientId the chefClientId to set
+     */
+    public void setChefClientId(String chefClientId) {
+        this.chefClientId = chefClientId;
+    }
+
+    /**
+     * @param privateKeyPath the privateKeyPath to set
+     */
+    public void setPrivateKeyPath(String privateKeyPath) {
+        this.privateKeyPath = privateKeyPath;
+    }
+
+    /**
+     * @param chefApiUrl the chefApiUrl to set
+     */
+    public void setChefApiUrl(String chefApiUrl) {
+        this.chefApiUrl = chefApiUrl;
     }
 }
