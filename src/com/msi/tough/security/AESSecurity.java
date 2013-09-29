@@ -122,6 +122,6 @@ public class AESSecurity {
             }
             return systemPassword.getBytes(Charsets.UTF_8);
         }
-        return null;
+        return this.systemPassword.getBytes(Charsets.UTF_8);
     }
 }
