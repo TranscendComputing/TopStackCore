@@ -160,6 +160,7 @@ public class ASGroupBean {
     public List<InstanceBean> getScaledInstances(Session s) {
         QueryBuilder builder = new QueryBuilder("from InstanceBean");
         builder.equals("asGroup", this);
+        builder.equals("health", "Healthy");
         final Query query = builder.toQuery(s);
         @SuppressWarnings("unchecked")
         final List<InstanceBean> list = query.list();
