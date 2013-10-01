@@ -171,12 +171,6 @@
             <version>${mule.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.mule.transports</groupId>
-            <artifactId>mule-transport-stdio</artifactId>
-            <version>${mule.version}</version>
-        </dependency>
-
         <!-- core dependencies, versions chosen to match current jars -->
         <dependency>
             <groupId>org.apache.axis2</groupId>

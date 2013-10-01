@@ -56,6 +56,12 @@ public class QueryFaults {
         return new ErrorResponse("Sender", msg, "InvalidParameterValue");
     }
 
+    public static ErrorResponse invalidState() {
+        return new ErrorResponse("Sender",
+                "The specified resource is not in the correct state for the request.",
+                "InvalidState");
+    }
+
     public static ErrorResponse MissingParameter() {
         return new ErrorResponse(
                 "Sender",
