@@ -18,10 +18,20 @@ package com.msi.tough.utils;
 import org.codehaus.jackson.JsonNode;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.util.Assert;
 
 import com.msi.tough.core.JsonUtil;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "/test-toughcore-context.xml" })
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 public class ChefUtilTest {
 
     @Ignore
@@ -96,8 +106,11 @@ public class ChefUtilTest {
     @Ignore
     // Test isn't working currently
     @Test
-    public void testProcess() throws Exception {
-        new ChefUtil();
+    public void testBasicGet() throws Exception {
+        ChefUtil chefUtil = ChefUtil.getInstance();
+        chefUtil.setChefApiUrl("https://grizzly-devint2.momentumsoftware.com/");
+        chefUtil.setPrivateKeyPath("/etc/chef/jgardner-grizzly2-vor.pem");
+        chefUtil.setChefClientId("jgardner-grizzly2-vor");
         final String json = ChefUtil.executeJson("GET", "/clients", "");
         System.out.println(json);
     }

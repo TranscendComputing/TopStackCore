@@ -55,7 +55,6 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.bouncycastle.openssl.PEMReader;
 import org.codehaus.jackson.JsonNode;
 import org.slf4j.Logger;
@@ -204,7 +203,7 @@ public class ChefUtil {
         for (final Map.Entry<String, String> en : headers.entrySet()) {
             cmd.setHeader(en.getKey(), en.getValue());
         }
-        final HttpClient cl = getInstance().getHttpClient();
+        final HttpClient cl = getInstance().getHttpClient(uri);
         final HttpResponse res = cl.execute(cmd);
         final HttpEntity resen = res.getEntity();
         final InputStream resin = resen.getContent();
@@ -440,9 +439,14 @@ public class ChefUtil {
     }
 
     /**
+     * @param uri the URI to which we'll connect.
+     *
      * @return the http client to connect to chef server.
      */
-    public HttpClient getHttpClient() {
+    public HttpClient getHttpClient(String uri) {
+        if (uri.toLowerCase().startsWith("http")) {
+            return new DefaultHttpClient();
+        }
         HttpClient client = null;
         TrustStrategy easyStrategy = new TrustStrategy() {
 
