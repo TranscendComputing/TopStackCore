@@ -64,14 +64,12 @@ public class InstanceUtils {
 		b.setPhysicalId(vm.getProviderVirtualMachineId());
 		b.setInstanceId(vm.getProviderVirtualMachineId());
 		b.setUuid(b.getInstanceId());
-		if (vm.getPrivateIpAddresses() != null
-				&& vm.getPrivateIpAddresses().length > 0) {
-			b.setPrivateIpAddress(vm.getPrivateIpAddresses()[0]);
+		if (vm.getPrivateAddresses().length > 0) {
+			b.setPrivateIpAddress(vm.getPrivateAddresses()[0].getIpAddress());
 		}
 		b.setPublicDnsName(vm.getPublicDnsAddress());
-		if (vm.getPublicIpAddresses() != null
-				&& vm.getPublicIpAddresses().length > 0) {
-			b.setPublicIp(vm.getPublicIpAddresses()[0]);
+		if (vm.getPublicAddresses().length > 0) {
+			b.setPublicIp(vm.getPublicAddresses()[0].getIpAddress());
 		}
 	}
 }

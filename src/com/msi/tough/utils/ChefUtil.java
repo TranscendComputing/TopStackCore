@@ -170,6 +170,7 @@ public class ChefUtil {
         final String userId = getInstance().getChefClientId();
         assert (userId != null);
         final String privateKey = getInstance().getPrivateKeyPath();
+
         assert (privateKey != null);
         final String url = getInstance().getChefApiUrl();
         assert (url != null);
@@ -205,6 +206,11 @@ public class ChefUtil {
         }
         final HttpClient cl = getInstance().getHttpClient(uri);
         final HttpResponse res = cl.execute(cmd);
+        if (res.getStatusLine().getStatusCode() > 400) {
+            logger.warn("Chef action returned: " + res.getStatusLine());
+            logger.warn("Chef client:"+userId+", pem: " + privateKey);
+        }
+        System.out.println("Http response:" + res.getStatusLine());
         final HttpEntity resen = res.getEntity();
         final InputStream resin = resen.getContent();
         final StringBuilder sb = new StringBuilder();
@@ -236,6 +242,10 @@ public class ChefUtil {
 
     public static String getNode(final String name) throws Exception {
         return executeJsonGet("/nodes/" + name);
+    }
+
+    public static String getClient(final String name) throws Exception {
+        return executeJsonGet("/clients/" + name);
     }
 
     private static byte[] hashBody(final String payload) throws Exception {
