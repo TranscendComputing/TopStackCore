@@ -82,7 +82,7 @@ public class DescribeInstance extends BaseProvider {
 		}
 		for (final String instanceId : instanceIds) {
 		    VirtualMachine vm = vmServ.getVirtualMachine(instanceId);
-			InstanceUtils.toResource(ins, vm);
+			InstanceUtils.toResource(ins, vm, ins.getAvailabilityZone());
 		}
 		logger.debug("Instance " + ins.getInstanceId() + " "
 				+ ins.getPublicIp());
