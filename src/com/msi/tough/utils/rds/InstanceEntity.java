@@ -145,6 +145,7 @@ public class InstanceEntity {
 		newInst.setMasterUserPassword(createRec.getMasterUserPassword());
 		newInst.setMultiAz(createRec.getMultiAZ());
 		newInst.setPort(createRec.getPort().intValue());
+		logger.debug("^&^ (tsCore) Setting port to : " + newInst.getPort());
 		newInst.setPreferredBackupWindow(createRec.getPreferredBackupWindow());
 		newInst.setPreferredMaintenanceWindow(createRec
 				.getPreferredMaintenanceWindow());
