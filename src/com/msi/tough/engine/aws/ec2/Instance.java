@@ -300,7 +300,7 @@ public class Instance extends BaseProvider implements Constants {
 
         // get pvtip address of the launched instance
         logger.info("instance launched " + vm.getProviderVirtualMachineId());
-        InstanceUtils.toResource(ins, vm);
+        InstanceUtils.toResource(ins, vm, ins.getAvailabilityZone());
         String pvtip = ins.getPrivateIpAddress();
         String publicIp = ins.getPublicIp();
         final String instanceId = ins.getInstanceId();

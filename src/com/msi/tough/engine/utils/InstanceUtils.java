@@ -15,10 +15,15 @@
  */
 package com.msi.tough.engine.utils;
 
+import java.util.Arrays;
+
 import org.dasein.cloud.compute.VirtualMachine;
+import org.dasein.cloud.network.RawAddress;
 
 import com.amazonaws.services.ec2.model.Instance;
 import com.msi.tough.cf.ec2.InstanceType;
+import com.msi.tough.core.CommaObject;
+import com.msi.tough.utils.ConfigurationUtil;
 
 public class InstanceUtils {
 	public static void toResource(final InstanceType b, final Instance i) {
@@ -58,20 +63,37 @@ public class InstanceUtils {
 		// b.setVolumes(volumes);
 	}
 
-	public static void toResource(final InstanceType b, final VirtualMachine vm) {
+	public static void toResource(final InstanceType b,
+	        final VirtualMachine vm, final String avZone) {
+	    // "public" IP may actually show up as private.
+        final String treatAsPublic = (String) ConfigurationUtil
+                .getConfiguration(Arrays.asList(new String[] {
+                        "treatAsPublic", avZone }));
+        CommaObject pseudoPublics = new CommaObject(treatAsPublic);
 		b.setImageId(vm.getProviderMachineImageId());
 		// b.setKeyName(vm.get);
 		b.setPhysicalId(vm.getProviderVirtualMachineId());
 		b.setInstanceId(vm.getProviderVirtualMachineId());
 		b.setUuid(b.getInstanceId());
-		if (vm.getPrivateIpAddresses() != null
-				&& vm.getPrivateIpAddresses().length > 0) {
-			b.setPrivateIpAddress(vm.getPrivateIpAddresses()[0]);
+		for (RawAddress address : vm.getPrivateAddresses()) {
+		    for (String pseudoPublic : pseudoPublics.getList()) {
+		        if (! address.getIpAddress().startsWith(pseudoPublic)) {
+		            b.setPrivateIpAddress(address.getIpAddress());
+		            break;
+		        }
+		    }
 		}
 		b.setPublicDnsName(vm.getPublicDnsAddress());
-		if (vm.getPublicIpAddresses() != null
-				&& vm.getPublicIpAddresses().length > 0) {
-			b.setPublicIp(vm.getPublicIpAddresses()[0]);
+        for (RawAddress address : vm.getPrivateAddresses()) {
+            for (String pseudoPublic : pseudoPublics.getList()) {
+                if (address.getIpAddress().startsWith(pseudoPublic)) {
+                    b.setPublicIp(address.getIpAddress());
+                    break;
+                }
+            }
+        }
+		if (vm.getPublicAddresses().length > 0) {
+			b.setPublicIp(vm.getPublicAddresses()[0].getIpAddress());
 		}
 	}
 }
