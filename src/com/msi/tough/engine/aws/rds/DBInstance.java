@@ -143,13 +143,13 @@ public class DBInstance extends BaseProvider {
                     final RdsDbsecurityGroup dbSecGrp = RDSUtil
                             .getSecurityGroup(s, dbSecGrpName, at.getId());
                     dbSecGrp.addInternal(secGrp);
-                    
+
                     s.save(dbSecGrp);
                     newGrp.addInternal(dbSecGrpName);
 
                     final AccountType daseinAt = new AccountType();
-                    daseinAt.setAccessKey(ac.getApiUsername());
-                    daseinAt.setSecretKey(ac.getApiPassword());
+                    daseinAt.setAccessKey(ac.getAccessKey());
+                    daseinAt.setSecretKey(ac.getSecretKey());
                     daseinAt.setTenant(ac.getTenant());
                     daseinAt.setId(ac.getId());
                     daseinAt.setDefKeyName(ac.getDefKeyName());
