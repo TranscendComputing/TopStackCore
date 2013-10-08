@@ -383,8 +383,8 @@ public class Instance extends BaseProvider implements Constants {
         logger.debug("pvtip found for instance:" + pvtip);
 
         // find out if a new public ip address need to be allocated for an
-        // instance for the availability zoen or is it automatucally assigned.
-        // Eucalyptus zones are automatically assiged and Openstack zones we
+        // instance for the availability zone or is it automatically assigned.
+        // Eucalyptus zones are automatically assigned and Openstack zones we
         // need to assign it separately
         String publicIpId = null;
         if (allocIp) {
@@ -464,7 +464,7 @@ public class Instance extends BaseProvider implements Constants {
                 final String id = call.getPhysicalId();
                 final InstanceBean ib = InstanceUtil.getInstance(s, id);
                 if (ib != null) {
-                    final String publicIp = ib.getPublicIpId();
+                    final String publicIpId = ib.getPublicIpId();
 
                     // if chef instance delete chef roles
                     if (ib.getChefRoles() != null) {
@@ -505,8 +505,8 @@ public class Instance extends BaseProvider implements Constants {
 
                             final IpAddressSupport ipServ = netServ
                                     .getIpAddressSupport();
-                            ipServ.releaseFromServer(publicIp);
-                            ipServ.releaseFromPool(publicIp);
+                            ipServ.releaseFromServer(publicIpId);
+                            ipServ.releaseFromPool(publicIpId);
                         }
                     } catch (final Exception e) {
                         e.printStackTrace();

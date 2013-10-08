@@ -288,7 +288,7 @@ public class LoadBalancer extends BaseProvider {
                                     .asList(new String[] { "KEYS_DIR" }));
                     final String key = keyDir + "/" + ac.getDefKeyName()
                             + ".pem";
-                    final String ip = InstanceUtil.getIP(inst.getPublicIpId(),
+                    final String ip = InstanceUtil.getIP(inst.getPublicIp(),
                             inst.getPrivateIp(), inst.getAvzone());
 
                     CFUtil.executeCommand(ac, null, "ssh", "-i", key, "-o",
