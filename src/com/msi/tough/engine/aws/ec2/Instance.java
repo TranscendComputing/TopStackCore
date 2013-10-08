@@ -499,7 +499,8 @@ public class Instance extends BaseProvider implements Constants {
                                 .getConfiguration(Arrays.asList(new String[] {
                                         "AllocatePublicIP", ib.getAvzone() }));
                         if (allocIp.equalsIgnoreCase("true")) {
-                            logger.debug("releasing associcated ip");
+                            logger.debug("Releasing associated ip: " +
+                                    ib.getPublicIp());
                             final NetworkServices netServ = cloudProvider
                                     .getNetworkServices();
 
@@ -524,7 +525,7 @@ public class Instance extends BaseProvider implements Constants {
                             logger.debug("DescribeInstances with "
                                     + vm.getCurrentState().toString());
                             if (vm.getCurrentState().equals(VmState.TERMINATED)) {
-                                logger.debug("InstanceNotFound is no longer running.");
+                                logger.debug("Expected termination complete.");
                                 break;
                             }
                         } catch (final Exception e) {
@@ -535,7 +536,7 @@ public class Instance extends BaseProvider implements Constants {
 
                     // delete instance record
                     s.delete(ib);
-                    logger.info("instance deleted " + ib.getInstanceId());
+                    logger.info("Instance deleted: " + ib.getInstanceId());
                 }
 
                 // delete resource bean records for the instance from stack
