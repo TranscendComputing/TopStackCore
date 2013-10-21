@@ -173,6 +173,13 @@
 
         <!-- core dependencies, versions chosen to match current jars -->
         <dependency>
+            <groupId>org.apache.jclouds.api</groupId>
+            <artifactId>chef</artifactId>
+            <version>1.6.2-incubating</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>1.5.2</version>

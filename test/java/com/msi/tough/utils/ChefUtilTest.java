@@ -15,17 +15,30 @@
  */
 package com.msi.tough.utils;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.matchers.JUnitMatchers.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+
 import org.codehaus.jackson.JsonNode;
-import org.junit.Ignore;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.util.Assert;
 
+import com.msi.tough.core.Appctx;
 import com.msi.tough.core.JsonUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,97 +47,148 @@ import com.msi.tough.core.JsonUtil;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 public class ChefUtilTest {
 
-    @Ignore
-    // Test isn't working currently
+    private final static Logger logger = Appctx
+            .getLogger(ChefUtilTest.class.getName());
+
+    static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+            "yyyy-MM-dd-HH-mm-ss-SSS");
+    static private final String baseName = dateFormat.format(new Date())
+            + UUID.randomUUID().toString().substring(0, 4);
+
+    static String name1 = "chefutil-" + baseName;
+    static String name2 = "chefutil2-" + baseName;
+
+    static String bag1 = "chefutil-bag1-" + baseName;
+    static String bag2 = "chefutil-bag2-" + baseName;
+
+    @Resource
+    ChefUtil chefUtil = null;
+
     @Test
     public void testClient() throws Exception {
-        final String json = ChefUtil.createClient("testclient1");
-        System.out.println(json);
-        System.out.println(ChefUtil.deleteClient("testclient1"));
+        String json = ChefUtil.createClient(name1);
+        assertThat("Create returns private key.", json, containsString("BEGIN"));
+        assertThat("Create returns private key.", json, containsString("END"));
+        json = ChefUtil.getClient(name1);
+        assertThat("Client is created.", json,
+                containsString("\"name\":\""+name1));
+        json = ChefUtil.putClientAsAdmin(name1);
+        assertThat("Client can be made admin.", json,
+                containsString("\"admin\":true"));
+        json = ChefUtil.getClient(name1);
+        assertThat("Client is admin.", json,
+                containsString("\"admin\":true"));
     }
 
-    @Ignore
-    // Test isn't working currently
+    @Test(expected=ChefUtil.InvalidChefRequest.class)
+    public void testClientBadArgs() throws Exception {
+        String oldClientId = chefUtil.getChefClientId();
+        try {
+            chefUtil.setChefClientId("some-bad-garbage-id");
+
+            String json = ChefUtil.createClient(name2);
+            logger.debug("Got response:"+json);
+            json = ChefUtil.getClient(name2);
+            logger.debug("Got response:"+json);
+        } finally {
+            chefUtil.setChefClientId(oldClientId);
+        }
+    }
+
     @Test
     public void testDatabag() throws Exception {
-        System.out.println(ChefUtil.createDatabag("testbag1"));
-        System.out.println(ChefUtil.createDatabagItem("testbag1", "item1"));
-        final String databag = ChefUtil.getDatabag("testbag1");
-        System.out.println(databag);
+        String json = ChefUtil.createDatabag(bag1);
+        assertThat("Databag is created.", json,
+                containsString(bag1));
+
+        json = ChefUtil.createDatabagItem(bag1, "item1");
+        assertThat("Databag item is created.", json,
+                containsString("\"id\":\"item1\""));
+        final String databag = ChefUtil.getDatabag(bag1);
+        logger.debug("Got databag:" + databag);
         // final JsonNode json = JsonUtil.load(databag);
-        System.out.println(ChefUtil.putDatabagItem("testbag1", "item1",
-                "{\"id\":\"item1\",\"f\":\"fff\"}"));
-        System.out.println(ChefUtil.deleteDatabagItem("testbag1", "item1"));
-        System.out.println(ChefUtil.deleteDatabag("testbag1"));
+        ChefUtil.putDatabagItem(bag1, "item1",
+                "{\"id\":\"item1\",\"f\":\"fff\"}");
+        json = ChefUtil.getDatabagItem(bag1, "item1");
+        assertThat("Databag item put ok.", json,
+                containsString("\"f\":\"fff\""));
+
+        ChefUtil.deleteDatabagItem(bag1, "item1");
+        ChefUtil.deleteDatabag(bag1);
     }
 
-    /*
-     * // This test moving to ElasticacheCore
-     *
-     * @Test public void testGetDatabag() throws Exception { final ChefUtil
-     * chefUtil = new ChefUtil();
-     *
-     * final String dataBagName = "elasticache-12-testcluster"; final String
-     * dataBagItemName = "config"; final boolean cleanup = false;
-     *
-     * final String databag = chefUtil.getDatabag(dataBagName); final JsonNode
-     * json = JsonUtil.load(databag); final JsonNode errorNode =
-     * json.get("error");
-     *
-     * // Assert.isNull(errorNode) ; // Assert.notNull(errorNode); final
-     * ElasticacheConfigDatabagItem cc = new
-     * ElasticacheConfigDatabagItem(dataBagItemName, 256, 11211);
-     *
-     * String cccJson = cc.toJson() ;
-     * System.out.println(JsonUtil.toJsonPrettyPrintString(cc));
-     *
-     * if (errorNode != null) { chefUtil.createDatabag(dataBagName);
-     * chefUtil.createDatabagItem(dataBagName, dataBagItemName);
-     * chefUtil.putDatabagItem(dataBagName, dataBagItemName, cc.toJson()); }
-     *
-     * if (cleanup) { chefUtil.deleteDatabagItem(dataBagName, dataBagItemName);
-     * chefUtil.deleteDatabag(dataBagName); }
-     *
-     * //JsonUtil.toJsonPrettyPrintString(json); }
-     */
-    @Ignore
-    // Test isn't working currently
     @Test
-    public void testGetNode() throws Exception {
-
-        final String nodeName = "jltest.momentumsoftware.com";
-
-        final String node = ChefUtil.getNode(nodeName);
-
-        final JsonNode json = JsonUtil.load(node);
-
-        System.out.println(JsonUtil.toJsonPrettyPrintString(json));
-
-        Assert.isTrue(true);
+    public void testNode() throws Exception {
+        String jsonText = ChefUtil.createNode(name1);
+        logger.debug(jsonText);
+        assertThat("Node is created.", jsonText,
+                containsString(name1));
+        jsonText = ChefUtil.getNode(name1);
+        logger.debug(jsonText);
+        JsonNode json = JsonUtil.load(jsonText);
+        //logger.debug(JsonUtil.toJsonPrettyPrintString(json));
+        assertThat("Node name is correct.", json.get("name").getTextValue(),
+                is(name1));
     }
 
-    @Ignore
-    // Test isn't working currently
+    @Test
+    public void testNodeUpdateRunlist() throws Exception {
+        try {
+            ChefUtil.createNode(name1);
+        } catch (Exception e) {
+            // ignore failure; may have already been created.
+        }
+        String jsonText = ChefUtil.putNodeRunlist(name1, "role[transcend_defaultrole]");
+        logger.debug(jsonText);
+        jsonText = ChefUtil.getNode(name1);
+        JsonNode json = JsonUtil.load(jsonText);
+        logger.debug(JsonUtil.toJsonPrettyPrintString(json));
+        assertThat("Node name is correct.", json.get("name").getTextValue(),
+                is(name1));
+    }
+
     @Test
     public void testBasicGet() throws Exception {
-        ChefUtil chefUtil = ChefUtil.getInstance();
-        chefUtil.setChefApiUrl("https://grizzly-devint2.momentumsoftware.com/");
-        chefUtil.setPrivateKeyPath("/etc/chef/jgardner-grizzly2-vor.pem");
-        chefUtil.setChefClientId("jgardner-grizzly2-vor");
         final String json = ChefUtil.executeJson("GET", "/clients", "");
-        System.out.println(json);
+        assertNotNull("client response is valid", json);
     }
 
-    @Ignore
-    // Test isn't working currently
     @Test
     public void testSearchNode() throws Exception {
+        try {
+            ChefUtil.createNode(name1);
+        } catch (Exception e) {
+            // ignore failure; may have already been created.
+        }
 
-        // final String nodes = chefUtil.searchNodes("name:c*") ;
-        final String nodes = ChefUtil.searchNodes("name%3Ac*");
+        // Search for :"name:chefutil-*";
+        String search = "name%3A" + name1.substring(0, 9) + "*";
+        final List<String> nodes = ChefUtil.searchNodes(search) ;
 
-        final JsonNode jsonNodes = JsonUtil.load(nodes);
-
-        System.out.println(JsonUtil.toJsonPrettyPrintString(jsonNodes));
+        //final JsonNode jsonNodes = JsonUtil.load(nodes);
+        for (String node : nodes) {
+            System.out.println(node);
+        }
     }
+
+    @AfterClass
+    public static void cleanupCreated() throws Exception {
+        try {
+            ChefUtil.deleteClient(name1);
+        } catch (Exception e) {
+            // ignore.
+        }
+        try {
+            ChefUtil.deleteDatabag(bag1);
+        } catch (Exception e) {
+            // ignore.
+        }
+        try {
+            ChefUtil.deleteNode(name1);
+        } catch (Exception e) {
+            // ignore.
+        }
+    }
+
+
 }

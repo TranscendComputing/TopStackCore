@@ -15,9 +15,12 @@
  */
 package com.msi.tough.utils;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
@@ -30,10 +33,13 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.SimpleTimeZone;
 
 import javax.crypto.Cipher;
@@ -41,6 +47,7 @@ import javax.crypto.Cipher;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -57,9 +64,19 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.bouncycastle.openssl.PEMReader;
 import org.codehaus.jackson.JsonNode;
+import org.jclouds.ContextBuilder;
+import org.jclouds.chef.ChefApi;
+import org.jclouds.chef.ChefContext;
+import org.jclouds.chef.domain.DatabagItem;
+import org.jclouds.chef.domain.Node;
+import org.jclouds.chef.domain.SearchResult;
+import org.jclouds.chef.options.SearchOptions;
 import org.slf4j.Logger;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.msi.tough.core.Appctx;
+import com.msi.tough.core.CommaObject;
 import com.msi.tough.core.JsonUtil;
 
 /**
@@ -78,7 +95,10 @@ public class ChefUtil {
 
     private String chefApiUrl = null;
 
+    private ChefApi chefApi;
+
     private static ChefUtil _instance = null;
+
 
     public static ChefUtil getInstance() {
         if (_instance == null) {
@@ -87,21 +107,9 @@ public class ChefUtil {
         return _instance;
     }
 
-    /*
-     * @param databagName String name for the databag to lock
-     *
-     * @returns boolean True if worked, False otherwise.
-     */
-    public static void beginDatabagUpdate(final String databagName)
-            throws Exception {
-        // So long as databag is update locked, the chef client
-        // must NOT converge on the databag items
-        ChefUtil.putDatabagItem(databagName, ChefUtil.databagLockedValue,
-                Boolean.TRUE.toString());
-    }
-
     public static String createDatabag(final String name) throws Exception {
         logger.info("createDatabag " + name);
+
         return ChefUtil.createDatabag(name, Boolean.FALSE);
     }
 
@@ -166,7 +174,8 @@ public class ChefUtil {
     }
 
     public static String executeJson(final String method,
-            final String endpointPath, final String payload) throws Exception {
+            final String endpointPath, final String payload)
+                    throws ChefApiException {
         final String userId = getInstance().getChefClientId();
         assert (userId != null);
         final String privateKey = getInstance().getPrivateKeyPath();
@@ -188,13 +197,25 @@ public class ChefUtil {
         }
         if (method.equals("POST")) {
             final HttpPost post = new HttpPost(uri);
-            final HttpEntity entity = new StringEntity(payload);
-            post.setEntity(entity);
+            HttpEntity entity;
+            try {
+                entity = new StringEntity(payload);
+                post.setEntity(entity);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                throw new InvalidChefRequest();
+            }
             cmd = post;
         }
         if (method.equals("PUT")) {
             final HttpPut put = new HttpPut(uri);
-            final HttpEntity entity = new StringEntity(payload);
+            HttpEntity entity;
+            try {
+                entity = new StringEntity(payload);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                throw new InvalidChefRequest();
+            }
             put.setEntity(entity);
             cmd = put;
         }
@@ -205,23 +226,41 @@ public class ChefUtil {
             cmd.setHeader(en.getKey(), en.getValue());
         }
         final HttpClient cl = getInstance().getHttpClient(uri);
-        final HttpResponse res = cl.execute(cmd);
+        HttpResponse res;
+        try {
+            res = cl.execute(cmd);
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+            throw new ChefApiException();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ChefApiException();
+        }
         if (res.getStatusLine().getStatusCode() > 400) {
             logger.warn("Chef action returned: " + res.getStatusLine());
             logger.warn("Chef client:"+userId+", pem: " + privateKey);
+            throw new InvalidChefRequest();
         }
-        System.out.println("Http response:" + res.getStatusLine());
         final HttpEntity resen = res.getEntity();
-        final InputStream resin = resen.getContent();
+        InputStream resin;
         final StringBuilder sb = new StringBuilder();
-        for (;;) {
-            final byte[] bs = new byte[1000];
-            final int i = resin.read(bs);
-            if (i == -1) {
-                break;
+        try {
+            resin = resen.getContent();
+            for (;;) {
+                final byte[] bs = new byte[1000];
+                final int i = resin.read(bs);
+                if (i == -1) {
+                    break;
+                }
+                final String str = new String(Arrays.copyOf(bs, i));
+                sb.append(str);
             }
-            final String str = new String(Arrays.copyOf(bs, i));
-            sb.append(str);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            throw new ChefApiException();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ChefApiException("Failed to read response.");
         }
         return sb.toString();
     }
@@ -248,21 +287,32 @@ public class ChefUtil {
         return executeJsonGet("/clients/" + name);
     }
 
-    private static byte[] hashBody(final String payload) throws Exception {
+    private static byte[] hashBody(final String payload)
+            throws ChefApiException {
         if (payload == null) {
             return null;
         }
-        return Base64.encodeBase64(SHA1(payload));
+        try {
+            return Base64.encodeBase64(SHA1(payload));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ChefApiException();
+        }
     }
 
-    private static byte[] hashPath(final String path) throws Exception {
-        return Base64.encodeBase64(SHA1(path));
+    private static byte[] hashPath(final String path) throws ChefApiException {
+        try {
+            return Base64.encodeBase64(SHA1(path));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ChefApiException();
+        }
     }
 
     public static void process(final String method, final String endpointPath,
             final Map<String, String> headers, final String payload,
             final String timestamp, final String userId, final String privateKey)
-            throws Exception {
+             throws ChefApiException {
         final byte[] contentHash = hashBody(payload);
         headers.put("X-Ops-Content-Hash", new String(contentHash));
         headers.put("X-Ops-Userid", userId);
@@ -292,10 +342,24 @@ public class ChefUtil {
         return executeJson("PUT", "/clients/" + client, payload);
     }
 
-    public static String putDatabagItem(final String bag,
+    public static void putDatabagItem(final String bag,
             final String itemName, final String item) throws Exception {
         logger.info("putDatabagItem " + bag + " " + itemName);
-        return executeJson("PUT", "/data/" + bag + "/" + itemName, item);
+        ChefApi api = getInstance().getChefApi();
+        DatabagItem databagItem = new DatabagItem(itemName, item);
+        databagItem = api.updateDatabagItem(bag, databagItem);
+        //return executeJson("PUT", "/data/" + bag + "/" + itemName, item);
+    }
+
+    public static String putSingleDatabagValue(final String bag,
+            final String itemName, final String value) throws Exception {
+        logger.info("putDatabagItem " + bag + " " + itemName);
+        ChefApi api = getInstance().getChefApi();
+        final String payload = "{\"id\":\""+itemName+"\"}";
+
+        DatabagItem databagItem = new DatabagItem(itemName, payload);
+        databagItem = api.updateDatabagItem(bag, databagItem);
+        return databagItem.toString();
     }
 
     @SuppressWarnings("unchecked")
@@ -328,25 +392,37 @@ public class ChefUtil {
     public static String putNodeRunlist(final String node, final String runList)
             throws Exception {
         logger.info("putNodeRunlist " + node + " " + runList);
+        ChefApi api = getInstance().getChefApi();
         final String json = executeJsonGet("/nodes/" + node);
         final JsonNode jsonNode = JsonUtil.load(json);
         final Map<String, Object> nodeMap = JsonUtil.toMap(jsonNode);
+        CommaObject runListComma = new CommaObject(runList);
+        Node nodeObj = new Node(node, runListComma.toList());
+        nodeObj = api.updateNode(nodeObj);
         // final Object noderunList = nodeMap.get("run_list");
-        nodeMap.remove("run_list");
-        final String payload = JsonUtil.toJsonString(nodeMap).substring(1);
-        final String pay = "{ \"run_list\":\"" + runList + "\"," + payload;
-        return executeJson("PUT", "/nodes/" + node, pay);
+        //nodeMap.remove("run_list");
+        //final String payload = JsonUtil.toJsonString(nodeMap).substring(1);
+        //final String pay = "{ \"run_list\":\"" + runList + "\"," + payload;
+        //return executeJson("PUT", "/nodes/" + node, pay);
+        return nodeObj.getRunList().toString();
     }
 
     public static PrivateKey readKeyFromFile(final String fileName)
-            throws Exception {
+            throws ChefApiException {
         logger.debug("readKeyFromFile " + fileName);
-        final Reader frdr = new FileReader(fileName);
-        final PEMReader pem = new PEMReader(frdr);
-        final KeyPair kp = (KeyPair) pem.readObject();
-        frdr.close();
-        pem.close();
-        return kp.getPrivate();
+        Reader frdr;
+        PEMReader pem;
+        try {
+            frdr = new FileReader(fileName);
+            pem = new PEMReader(frdr);
+            final KeyPair kp = (KeyPair) pem.readObject();
+            frdr.close();
+            pem.close();
+            return kp.getPrivate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BadChefConfiguration();
+        }
     }
 
     public static byte[] rsaDecrypt(final byte[] data, final PublicKey key)
@@ -358,15 +434,27 @@ public class ChefUtil {
     }
 
     public static byte[] rsaEncrypt(final byte[] data, final PrivateKey pvtKey)
-            throws Exception {
-        final Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, pvtKey);
-        final byte[] cipherData = cipher.doFinal(data);
-        return cipherData;
+             {
+        try {
+            final Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, pvtKey);
+            final byte[] cipherData = cipher.doFinal(data);
+            return cipherData;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to encrypt chef request.");
+        }
     }
 
-    public static String searchNodes(final String search) throws Exception {
-        return executeJsonGet("/search/node?q=" + search);
+    public static List<String> searchNodes(final String search) throws Exception {
+        ChefApi api = getInstance().getChefApi();
+        SearchResult<? extends Node> searchResult =
+                api.searchNodes(SearchOptions.Builder.query(search));
+        ArrayList<String> result = new ArrayList<String>();
+        for (Node n : searchResult) {
+            result.add(n.toString());
+        }
+        return result;
     }
 
     public static byte[] SHA1(final String text) throws Exception {
@@ -377,7 +465,7 @@ public class ChefUtil {
     }
 
     public static byte[] sign(final String toSign, final String privateKey)
-            throws Exception {
+        throws ChefApiException {
         final byte[] encrypted = rsaEncrypt(toSign.getBytes(),
                 readKeyFromFile(privateKey));
         return Base64.encodeBase64(encrypted);
@@ -395,7 +483,7 @@ public class ChefUtil {
 
     private static void calculateAndReplaceAuthorizationHeaders(
             final String toSign, final Map<String, String> headers,
-            final String privateKey) throws Exception {
+            final String privateKey)  throws ChefApiException {
         final String signature = new String(sign(toSign, privateKey));
         final int len = signature.length();
         for (int i = 0;; i++) {
@@ -419,13 +507,30 @@ public class ChefUtil {
     }
 
     /**
+     * Creates a node
+     *
+     * @param name
+     * @return node json
+     * @throws Exception
+     */
+    public static String createNode(final String name) throws Exception {
+        logger.debug("createNode " + name);
+        // Despite the docs, it seems that chef 10 requires a run list and
+        // a json class to create a node.
+        String nodeTemplate = "{\"run_list\":[],\"json_class\":\"Chef::Node\"}";
+        final String json = executeJson("POST", "/nodes", "{\"name\":\""
+                + name + "\", " + nodeTemplate.substring(1));
+        return json;
+    }
+
+    /**
      * Creates a client and returns its private key
      *
      * @param name
      * @return private key
      * @throws Exception
      */
-    public static String createClient(final String name) throws Exception {
+    public static String createClient(final String name) throws ChefApiException {
         logger.debug("createClient " + name);
         final String json = executeJson("POST", "/clients", "{\"name\":\""
                 + name + "\"}");
@@ -442,7 +547,7 @@ public class ChefUtil {
         // we always must have a lock item to prevent partial convergence
         // while changes take place in bulk.
         ChefUtil.createDatabagItem(name, ChefUtil.databagLockItem);
-        ChefUtil.putDatabagItem(name, ChefUtil.databagLockItem,
+        ChefUtil.putSingleDatabagValue(name, ChefUtil.databagLockItem,
                 lockFlag.toString());
 
         return dbag;
@@ -454,7 +559,7 @@ public class ChefUtil {
      * @return the http client to connect to chef server.
      */
     public HttpClient getHttpClient(String uri) {
-        if (uri.toLowerCase().startsWith("http")) {
+        if (uri.toLowerCase().startsWith("http:")) {
             return new DefaultHttpClient();
         }
         HttpClient client = null;
@@ -536,5 +641,86 @@ public class ChefUtil {
      */
     public void setChefApiUrl(String chefApiUrl) {
         this.chefApiUrl = chefApiUrl;
+    }
+
+    public ChefApi getChefApi() throws ChefApiException {
+        if (chefApi != null) {
+            return chefApi;
+        }
+        String credential;
+        try {
+            credential = Files.toString(new File(privateKeyPath), Charsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new InvalidChefRequest();
+        }
+
+        Properties overrides = new Properties();
+        overrides.setProperty("jclouds.trust-all-certs", Boolean.TRUE.toString());
+        overrides.setProperty("jclouds.relax-hostname", Boolean.TRUE.toString());
+
+        ChefContext context = ContextBuilder.newBuilder("chef")
+                .endpoint(getChefApiUrl())
+                .credentials(getChefClientId(), credential)
+                .overrides(overrides)
+                .buildView(ChefContext.class);
+
+        chefApi = context.getApi(ChefApi.class);
+        return chefApi;
+    }
+
+    public static class ChefApiException extends Exception {
+
+        /**
+         *
+         */
+        public ChefApiException() {
+            super();
+        }
+
+        /**
+         * @param arg0
+         * @param arg1
+         */
+        public ChefApiException(String arg0, Throwable arg1) {
+            super(arg0, arg1);
+        }
+
+        /**
+         * @param arg0
+         */
+        public ChefApiException(Throwable arg0) {
+            super(arg0);
+        }
+
+        /**
+         * @param string
+         */
+        public ChefApiException(String string) {
+        }
+
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
+
+    }
+
+    public static class InvalidChefRequest extends ChefApiException {
+
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
+
+    }
+
+    public static class BadChefConfiguration extends ChefApiException {
+
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
+
     }
 }
