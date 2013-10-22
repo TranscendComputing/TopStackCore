@@ -120,6 +120,8 @@ public class ChefUtilTest {
     @Test
     public void testNode() throws Exception {
         String jsonText = ChefUtil.createNode(name1);
+        ChefUtil.putNodeAttribute(name1,
+                "__TRANSCEND_TEST__", name1);
         logger.debug(jsonText);
         assertThat("Node is created.", jsonText,
                 containsString(name1));
@@ -135,9 +137,12 @@ public class ChefUtilTest {
     public void testNodeUpdateRunlist() throws Exception {
         try {
             ChefUtil.createNode(name1);
+            ChefUtil.putNodeAttribute(name1,
+                    "__TRANSCEND_TEST__", name1);
         } catch (Exception e) {
             // ignore failure; may have already been created.
         }
+
         String jsonText = ChefUtil.putNodeRunlist(name1, "role[transcend_defaultrole]");
         logger.debug(jsonText);
         jsonText = ChefUtil.getNode(name1);
@@ -145,6 +150,8 @@ public class ChefUtilTest {
         logger.debug(JsonUtil.toJsonPrettyPrintString(json));
         assertThat("Node name is correct.", json.get("name").getTextValue(),
                 is(name1));
+        assertThat("Node attributes are intact.", json.get("normal").toString(),
+                containsString("__TRANSCEND_TEST__"));
     }
 
     @Test
@@ -157,6 +164,8 @@ public class ChefUtilTest {
     public void testSearchNode() throws Exception {
         try {
             ChefUtil.createNode(name1);
+            ChefUtil.putNodeAttribute(name1,
+                    "__TRANSCEND_TEST__", name1);
         } catch (Exception e) {
             // ignore failure; may have already been created.
         }

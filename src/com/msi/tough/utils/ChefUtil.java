@@ -67,6 +67,7 @@ import org.codehaus.jackson.JsonNode;
 import org.jclouds.ContextBuilder;
 import org.jclouds.chef.ChefApi;
 import org.jclouds.chef.ChefContext;
+import org.jclouds.chef.ChefService;
 import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.SearchResult;
@@ -393,11 +394,12 @@ public class ChefUtil {
             throws Exception {
         logger.info("putNodeRunlist " + node + " " + runList);
         ChefApi api = getInstance().getChefApi();
-        final String json = executeJsonGet("/nodes/" + node);
-        final JsonNode jsonNode = JsonUtil.load(json);
-        final Map<String, Object> nodeMap = JsonUtil.toMap(jsonNode);
+        Node nodeObj = api.getNode(node);
         CommaObject runListComma = new CommaObject(runList);
-        Node nodeObj = new Node(node, runListComma.toList());
+        nodeObj = new Node(nodeObj.getName(), nodeObj.getNormal(),
+                nodeObj.getOverride(), nodeObj.getDefault(),
+                nodeObj.getAutomatic(), runListComma.toList(),
+                nodeObj.getChefEnvironment());
         nodeObj = api.updateNode(nodeObj);
         // final Object noderunList = nodeMap.get("run_list");
         //nodeMap.remove("run_list");
