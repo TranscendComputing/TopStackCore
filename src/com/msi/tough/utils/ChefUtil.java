@@ -67,7 +67,7 @@ import org.codehaus.jackson.JsonNode;
 import org.jclouds.ContextBuilder;
 import org.jclouds.chef.ChefApi;
 import org.jclouds.chef.ChefContext;
-import org.jclouds.chef.ChefService;
+import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.SearchResult;
@@ -454,7 +454,18 @@ public class ChefUtil {
                 api.searchNodes(SearchOptions.Builder.query(search));
         ArrayList<String> result = new ArrayList<String>();
         for (Node n : searchResult) {
-            result.add(n.toString());
+            result.add(JsonUtil.toJsonString(n));
+        }
+        return result;
+    }
+
+    public static List<String> searchClients(final String search) throws Exception {
+        ChefApi api = getInstance().getChefApi();
+        SearchResult<? extends Client> searchResult =
+                api.searchClients(SearchOptions.Builder.query(search));
+        ArrayList<String> result = new ArrayList<String>();
+        for (Client client : searchResult) {
+            result.add(JsonUtil.toJsonString(client));
         }
         return result;
     }

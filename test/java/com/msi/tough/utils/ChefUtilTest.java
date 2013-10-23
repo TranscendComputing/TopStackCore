@@ -176,7 +176,34 @@ public class ChefUtilTest {
 
         //final JsonNode jsonNodes = JsonUtil.load(nodes);
         for (String node : nodes) {
-            System.out.println(node);
+            JsonNode json = JsonUtil.load(node);
+            logger.debug(JsonUtil.toJsonPrettyPrintString(json));
+        }
+    }
+
+    @Test
+    public void testDeletePattern() throws Exception {
+
+        // Search for :"name:chefutil-*";
+        String search = "name%3A" + name1.substring(0, 9) + "*";
+        search = "name%3A" + "rds-default*";
+        final List<String> nodes = ChefUtil.searchNodes(search) ;
+
+        //final JsonNode jsonNodes = JsonUtil.load(nodes);
+        for (String node : nodes) {
+            JsonNode json = JsonUtil.load(node);
+            ChefUtil.deleteNode(json.get("name").getTextValue());
+            logger.debug("Deleted: " + json.get("name").getTextValue());
+        }
+        search = "name%3A" + name1.substring(0, 9) + "*";
+        search = "name%3A" + "rds-*";
+        final List<String> clients = ChefUtil.searchClients(search) ;
+
+        //final JsonNode jsonNodes = JsonUtil.load(nodes);
+        for (String client : clients) {
+            JsonNode json = JsonUtil.load(client);
+            ChefUtil.deleteClient(json.get("name").getTextValue());
+            logger.debug("Deleted: " + json.get("name").getTextValue());
         }
     }
 
@@ -198,6 +225,4 @@ public class ChefUtilTest {
             // ignore.
         }
     }
-
-
 }
