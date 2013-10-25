@@ -50,6 +50,14 @@ public class ActionHelper {
     public void validate(final ServiceRequest req,
             ServiceRequestContext context,
             QueuedAction action) {
+    	validate(req, context, action, true);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public void validate(final ServiceRequest req,
+            ServiceRequestContext context,
+            QueuedAction action, boolean validate) {
 
         Session session = action.getSession();
         final Map<String, String[]> map = req.getParameterMap();
@@ -76,43 +84,45 @@ public class ActionHelper {
         context.setAwsAccessKeyId(req.getParameter("AWSAccessKeyId"));
         context.setSignature(req.getParameter("Signature"));
 
-        if (context.getAwsAccessKeyId() == null) {
-            final String auth = req.getHeader("authorization");
-            if (auth == null) {
-                throw QueryFaults.AuthorizationNotFound();
-            }
-            final String ts = "Credential=";
-            final int iauth = auth.indexOf(ts);
-            if (iauth != -1) {
-                final int iauth2 = auth.indexOf("/", iauth);
-                context.setAwsAccessKeyId(auth.substring(iauth + ts.length(), iauth2));
-            }
-            final int sign = auth.indexOf("Signature=");
-            if (sign != -1) {
-                context.setSignature(auth.substring(sign));
-            }
-        }
-
-        final Map<String, Object> options = (Map<String, Object>) Appctx
-                .getThreadMap(Constants.ENDPOINT_OPTIONS);
-        boolean useApi = false;
-        if (options != null) {
-            final String opt = (String) options.get("AUTHN");
-            if (opt != null && opt.equals("API")) {
-                useApi = true;
-            }
-        }
-        if (useApi) {
-            context.setAccountBean(AccountUtil.readAccountApi(session, context.getAwsAccessKeyId()));
-        } else {
-            context.setAccountBean(AccountUtil.readAccount(session, context.getAwsAccessKeyId()));
-        }
-
-        if (context.getAccountBean() == null) {
-            throw new ErrorResponse(
-                    "Sender",
-                    "Incorrect or invalid data is supplied for the security token.",
-                    "InvalidSecurityToken");
+        if (validate) {
+	        if (context.getAwsAccessKeyId() == null) {
+	            final String auth = req.getHeader("authorization");
+	            if (auth == null) {
+	                throw QueryFaults.AuthorizationNotFound();
+	            }
+	            final String ts = "Credential=";
+	            final int iauth = auth.indexOf(ts);
+	            if (iauth != -1) {
+	                final int iauth2 = auth.indexOf("/", iauth);
+	                context.setAwsAccessKeyId(auth.substring(iauth + ts.length(), iauth2));
+	            }
+	            final int sign = auth.indexOf("Signature=");
+	            if (sign != -1) {
+	                context.setSignature(auth.substring(sign));
+	            }
+	        }
+	
+	        final Map<String, Object> options = (Map<String, Object>) Appctx
+	                .getThreadMap(Constants.ENDPOINT_OPTIONS);
+	        boolean useApi = false;
+	        if (options != null) {
+	            final String opt = (String) options.get("AUTHN");
+	            if (opt != null && opt.equals("API")) {
+	                useApi = true;
+	            }
+	        }
+	        if (useApi) {
+	            context.setAccountBean(AccountUtil.readAccountApi(session, context.getAwsAccessKeyId()));
+	        } else {
+	            context.setAccountBean(AccountUtil.readAccount(session, context.getAwsAccessKeyId()));
+	        }
+	
+	        if (context.getAccountBean() == null) {
+	            throw new ErrorResponse(
+	                    "Sender",
+	                    "Incorrect or invalid data is supplied for the security token.",
+	                    "InvalidSecurityToken");
+	        }
         }
         context.setAccountId(context.getAccountBean().getId());
     }
