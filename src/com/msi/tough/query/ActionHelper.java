@@ -123,7 +123,7 @@ public class ActionHelper {
 	                    "Incorrect or invalid data is supplied for the security token.",
 	                    "InvalidSecurityToken");
 	        }
+	        context.setAccountId(context.getAccountBean().getId());
         }
-        context.setAccountId(context.getAccountBean().getId());
     }
 }
