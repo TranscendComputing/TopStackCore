@@ -17,6 +17,7 @@ package com.msi.tough.utils;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.matchers.JUnitMatchers.*;
 
@@ -112,6 +113,22 @@ public class ChefUtilTest {
         json = ChefUtil.getDatabagItem(bag1, "item1");
         assertThat("Databag item put ok.", json,
                 containsString("\"f\":\"fff\""));
+
+        ChefUtil.deleteDatabagItem(bag1, "item1");
+        ChefUtil.deleteDatabag(bag1);
+    }
+
+    @Test
+    public void testDatabagAllInOne() throws Exception {
+        final String bagContent = "{\"One\":\"one\", "
+                + "\"Two\":\"two\"}";
+        ChefUtil.createDatabagItem(bag1, "item1",
+                bagContent);
+        ChefUtil.createDatabagItem(bag1, "item2",
+                bagContent);
+
+        String json = ChefUtil.getDatabagItem(bag1, "item1");
+        assertThat("Databag is created, item set.", json, containsString("Two"));
 
         ChefUtil.deleteDatabagItem(bag1, "item1");
         ChefUtil.deleteDatabag(bag1);

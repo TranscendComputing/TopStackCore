@@ -109,21 +109,32 @@ public class ChefUtil {
     }
 
     public static String createDatabag(final String name) throws Exception {
-        logger.info("createDatabag " + name);
+        logger.debug("createDatabag " + name);
 
         return ChefUtil.createDatabag(name, Boolean.FALSE);
     }
 
     public static String createDatabagItem(final String bag, final String item)
             throws Exception {
-        logger.info("createDatabagItem " + bag + " " + item);
+        logger.debug("createDatabagItem " + bag + " " + item);
         return executeJson("POST", "/data/" + bag, "{\"id\":\"" + item + "\"}");
     }
 
+    /**
+     * Create a databag and item and associated item value in one call.
+     * @param databag
+     * @param item
+     * @param str
+     * @throws Exception
+     */
     public static void createDatabagItem(final String databag,
             final String item, final String str) throws Exception {
-        logger.info("createDatabagItem " + databag + " " + item + " " + str);
-        createDatabag(databag);
+        logger.debug("createDatabagItem " + databag + " " + item + " " + str);
+        try {
+            createDatabag(databag);
+        } catch (DuplicateChefItem dce) {
+            // ignore duplicates; may be just adding items to databag.
+        }
         createDatabagItem(databag, item);
         putDatabagItem(databag, item, str);
     }
@@ -153,7 +164,7 @@ public class ChefUtil {
 
     public static String deleteDatabagItem(final String bag, final String item)
             throws Exception {
-        logger.info("deleteDatabagItem " + bag + " " + item);
+        logger.debug("deleteDatabagItem " + bag + " " + item);
         return executeJson("DELETE", "/data/" + bag + "/" + item, "");
     }
 
@@ -238,6 +249,9 @@ public class ChefUtil {
             throw new ChefApiException();
         }
         if (res.getStatusLine().getStatusCode() > 400) {
+            if (res.getStatusLine().getStatusCode() == 409) {
+                throw new DuplicateChefItem();
+            }
             logger.warn("Chef action returned: " + res.getStatusLine());
             logger.warn("Chef client:"+userId+", pem: " + privateKey);
             throw new InvalidChefRequest();
@@ -338,14 +352,14 @@ public class ChefUtil {
     }
 
     public static String putClientAsAdmin(final String client) throws Exception {
-        logger.info("putClientAsAdmin " + client);
+        logger.debug("putClientAsAdmin " + client);
         final String payload = "{\"admin\":true,\"name\":\"" + client + "\"}";
         return executeJson("PUT", "/clients/" + client, payload);
     }
 
     public static void putDatabagItem(final String bag,
             final String itemName, final String item) throws Exception {
-        logger.info("putDatabagItem " + bag + " " + itemName);
+        logger.debug("putDatabagItem " + bag + " " + itemName);
         ChefApi api = getInstance().getChefApi();
         DatabagItem databagItem = new DatabagItem(itemName, item);
         databagItem = api.updateDatabagItem(bag, databagItem);
@@ -354,7 +368,7 @@ public class ChefUtil {
 
     public static String putSingleDatabagValue(final String bag,
             final String itemName, final String value) throws Exception {
-        logger.info("putDatabagItem " + bag + " " + itemName);
+        logger.debug("putDatabagItem " + bag + " " + itemName);
         ChefApi api = getInstance().getChefApi();
         final String payload = "{\"id\":\""+itemName+"\"}";
 
@@ -366,7 +380,7 @@ public class ChefUtil {
     @SuppressWarnings("unchecked")
     public static String putNodeAttribute(final String node,
             final String attrib, final String value) throws Exception {
-        logger.info("putNodeAttribute " + node + " " + attrib + " " + value);
+        logger.debug("putNodeAttribute " + node + " " + attrib + " " + value);
         final String s = executeJsonGet("/nodes/" + node);
         final JsonNode n = JsonUtil.load(s);
         final Map<String, Object> m = JsonUtil.toMap(n);
@@ -392,7 +406,7 @@ public class ChefUtil {
 
     public static String putNodeRunlist(final String node, final String runList)
             throws Exception {
-        logger.info("putNodeRunlist " + node + " " + runList);
+        logger.debug("putNodeRunlist " + node + " " + runList);
         ChefApi api = getInstance().getChefApi();
         Node nodeObj = api.getNode(node);
         CommaObject runListComma = new CommaObject(runList);
@@ -729,6 +743,14 @@ public class ChefUtil {
     }
 
     public static class BadChefConfiguration extends ChefApiException {
+
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
+
+    }
+    public static class DuplicateChefItem extends ChefApiException {
 
         /**
          *
