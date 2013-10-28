@@ -87,7 +87,7 @@ public class CFUtil {
             final String availabilityZone, final String name,
             final Map<String, Object> parameterValues) throws Exception {
 
-        HibernateUtil.withSession(new HibernateUtil.Operation<Object>() {
+        HibernateUtil.withNewSession(new HibernateUtil.Operation<Object>() {
             @Override
             public Object ex(final Session s, final Object... as)
                     throws Exception {
@@ -448,7 +448,7 @@ public class CFUtil {
             public void run() {
                 try {
                     HibernateUtil
-                            .withSession(new HibernateUtil.Operation<Object>() {
+                            .withNewSession(new HibernateUtil.Operation<Object>() {
 
                                 @Override
                                 public Object ex(final Session s,
@@ -499,7 +499,7 @@ public class CFUtil {
             final long userId, final String script,
             final TemplateContext paramterValues) throws Exception {
         return HibernateUtil
-                .withSession(new HibernateUtil.Operation<Map<String, Object>>() {
+                .withNewSession(new HibernateUtil.Operation<Map<String, Object>>() {
 
                     @Override
                     public Map<String, Object> ex(final Session s,
@@ -653,7 +653,7 @@ public class CFUtil {
             @Override
             public void run() {
                 HibernateUtil
-                        .withSession(new HibernateUtil.Operation<Object>() {
+                        .withNewSession(new HibernateUtil.Operation<Object>() {
 
                             @Override
                             public Object ex(final Session s,
@@ -672,7 +672,7 @@ public class CFUtil {
     public static void updateAWSScript(final String stackId, final long userId,
             final String script, final TemplateContext paramterValues)
             throws Exception {
-        HibernateUtil.withSession(new HibernateUtil.Operation<Object>() {
+        HibernateUtil.withNewSession(new HibernateUtil.Operation<Object>() {
 
             @Override
             public Object ex(final Session s, final Object... as)

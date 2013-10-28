@@ -300,7 +300,7 @@ public class Instance extends BaseProvider implements Constants {
 
         // get pvtip address of the launched instance
         logger.info("instance launched " + vm.getProviderVirtualMachineId());
-        InstanceUtils.toResource(ins, vm);
+        InstanceUtils.toResource(ins, vm, ins.getAvailabilityZone());
         String pvtip = ins.getPrivateIpAddress();
         String publicIp = ins.getPublicIp();
         final String instanceId = ins.getInstanceId();
@@ -383,8 +383,8 @@ public class Instance extends BaseProvider implements Constants {
         logger.debug("pvtip found for instance:" + pvtip);
 
         // find out if a new public ip address need to be allocated for an
-        // instance for the availability zoen or is it automatucally assigned.
-        // Eucalyptus zones are automatically assiged and Openstack zones we
+        // instance for the availability zone or is it automatically assigned.
+        // Eucalyptus zones are automatically assigned and Openstack zones we
         // need to assign it separately
         String publicIpId = null;
         if (allocIp) {
@@ -464,7 +464,7 @@ public class Instance extends BaseProvider implements Constants {
                 final String id = call.getPhysicalId();
                 final InstanceBean ib = InstanceUtil.getInstance(s, id);
                 if (ib != null) {
-                    final String publicIp = ib.getPublicIpId();
+                    final String publicIpId = ib.getPublicIpId();
 
                     // if chef instance delete chef roles
                     if (ib.getChefRoles() != null) {
@@ -499,14 +499,15 @@ public class Instance extends BaseProvider implements Constants {
                                 .getConfiguration(Arrays.asList(new String[] {
                                         "AllocatePublicIP", ib.getAvzone() }));
                         if (allocIp.equalsIgnoreCase("true")) {
-                            logger.debug("releasing associcated ip");
+                            logger.debug("Releasing associated ip: " +
+                                    ib.getPublicIp());
                             final NetworkServices netServ = cloudProvider
                                     .getNetworkServices();
 
                             final IpAddressSupport ipServ = netServ
                                     .getIpAddressSupport();
-                            ipServ.releaseFromServer(publicIp);
-                            ipServ.releaseFromPool(publicIp);
+                            ipServ.releaseFromServer(publicIpId);
+                            ipServ.releaseFromPool(publicIpId);
                         }
                     } catch (final Exception e) {
                         e.printStackTrace();
@@ -524,7 +525,7 @@ public class Instance extends BaseProvider implements Constants {
                             logger.debug("DescribeInstances with "
                                     + vm.getCurrentState().toString());
                             if (vm.getCurrentState().equals(VmState.TERMINATED)) {
-                                logger.debug("InstanceNotFound is no longer running.");
+                                logger.debug("Expected termination complete.");
                                 break;
                             }
                         } catch (final Exception e) {
@@ -535,7 +536,7 @@ public class Instance extends BaseProvider implements Constants {
 
                     // delete instance record
                     s.delete(ib);
-                    logger.info("instance deleted " + ib.getInstanceId());
+                    logger.info("Instance deleted: " + ib.getInstanceId());
                 }
 
                 // delete resource bean records for the instance from stack

@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.zeromq.ZMQ;
+import org.zeromq.ZMQException;
 
 import com.google.common.base.Charsets;
 import com.msi.tough.core.Appctx;
@@ -70,8 +71,18 @@ public class WorkflowReceiver implements Runnable {
         logger.debug("Binding to ZMQ socket for receive:" +
                 recvEndpoint);
         zmqRecvSocket = zmqContext.socket(ZMQ.PULL);
-        zmqRecvSocket.bind(recvEndpoint);
-
+        boolean success = false;
+        for (int i = 0; i < 5 && !success; i++) {
+            try {
+                zmqRecvSocket.bind(recvEndpoint);
+                success = true;
+            } catch (ZMQException zmqex) {
+                Thread.sleep(1000);
+                // Retry for a few seconds; on webapp restart, ZMQ may not have
+                // released the port.
+                logger.info("Failed to listen on socket...retrying:" + zmqex);
+            }
+        }
         items = new ZMQ.Poller(1);
         items.register(zmqRecvSocket, ZMQ.Poller.POLLIN);
         executeResult = ExecutorHelper.execute(this);
@@ -101,7 +112,6 @@ public class WorkflowReceiver implements Runnable {
     public void run() {
         while (!done.get() && !Thread.currentThread().isInterrupted()) {
             byte[] messageBytes, messageBytesPt2 = null;
-            //logger.info("Polling."+new Date());
             items.poll(500);
             if (items.pollin(0)) {
                 messageBytes = zmqRecvSocket.recv(0);
@@ -121,7 +131,7 @@ public class WorkflowReceiver implements Runnable {
                 }
             }
         }
-        logger.debug("Exiting receive thread.");
+        logger.debug("WorkflowReceiver: Exiting receive thread.");
         zmqRecvSocket.close();
     }
 }

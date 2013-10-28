@@ -93,7 +93,11 @@ public abstract class AbstractWorker<T extends Message, V extends Message> {
         requestId = (String) ProtobufUtil.getRequiredField(req, "requestId");
         assert(requestId != null);
         try {
-            account = AccountUtil.readAccount(session, accessKey);
+            if ("SYSTEM".equals(accessKey)) {
+                account = AccountUtil.readAccount(session, 1L);
+            } else {
+                account = AccountUtil.readAccount(session, accessKey);
+            }
         }
         catch (Exception e) {
             mark(null, e);

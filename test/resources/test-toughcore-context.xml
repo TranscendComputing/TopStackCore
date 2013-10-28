@@ -99,6 +99,12 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
+    <bean id="chefUtil" class="com.msi.tough.utils.ChefUtil" factory-method="getInstance">
+        <property name="chefClientId" value="${CHEF_USER_ID}" />
+        <property name="privateKeyPath" value="${CHEF_PRIVATE_KEY}" />
+        <property name="chefApiUrl" value="${CHEF_API_URL}" />
+    </bean>
+
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">

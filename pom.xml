@@ -171,13 +171,14 @@
             <version>${mule.version}</version>
         </dependency>
 
+        <!-- core dependencies, versions chosen to match current jars -->
         <dependency>
-            <groupId>org.mule.transports</groupId>
-            <artifactId>mule-transport-stdio</artifactId>
-            <version>${mule.version}</version>
+            <groupId>org.apache.jclouds.api</groupId>
+            <artifactId>chef</artifactId>
+            <version>1.6.2-incubating</version>
+            <scope>compile</scope>
         </dependency>
 
-        <!-- core dependencies, versions chosen to match current jars -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>

@@ -17,14 +17,20 @@ package com.msi.tough.model.rds;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.Query;
@@ -101,18 +107,24 @@ public class RdsDbsecurityGroup {
 	private String stackId;
 
 	// private int counter;
-
 	@Column(name = "internals")
 	private String internals;
+	
+	@ElementCollection
+	@Column(name="scaledInternals")
+	private Set<String> scaledInternals;
+
 
 	@Column(name = "transcendOnly", nullable = false)
 	private boolean transcendOnly; // if this flag is set, the DBSecurityGroup
 									// should not be visible to users
+	
 
 	public RdsDbsecurityGroup() {
 		port = -1;
 		// counter = -1;
 		transcendOnly = false;
+		scaledInternals = new HashSet<String>();
 	}
 
 	public AccountBean getAccount() {
@@ -166,8 +178,8 @@ public class RdsDbsecurityGroup {
 		return id;
 	}
 
-	public String getInternals() {
-		return internals;
+	public Set<String> getscaledInternals() {
+		return scaledInternals;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -227,10 +239,17 @@ public class RdsDbsecurityGroup {
 	// counter = c;
 	// }
 
-	public void setInternals(final String internals) {
-		this.internals = internals;
+	public void setscaledInternals(final Set<String> scaledInternals) {
+		this.scaledInternals = scaledInternals;
+	}
+	
+	public void addInternal(final String internal) {
+		scaledInternals.add(internal);
 	}
 
+	public boolean removeInternal(final String internal) {
+		return scaledInternals.remove(internal);
+	}
 	public void setPort(final int p) {
 		port = p;
 	}

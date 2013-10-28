@@ -194,7 +194,7 @@ public class RemoteWorkflow implements Workflow, Runnable {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             byte[] messageBytes;
-            items.poll();
+            items.poll(500);
             if (items.pollin(0)) {
                 messageBytes = zmqRecvSocket.recv(0);
                 try {
@@ -219,7 +219,7 @@ public class RemoteWorkflow implements Workflow, Runnable {
                 }
             }
         }
-        logger.debug("Exiting receive thread.");
+        logger.debug("RemoteWorkflow: Exiting receive thread.");
         zmqRecvSocket.close();
     }
 

@@ -50,9 +50,9 @@ import javax.persistence.Table;
  * <li>ipAddress: ipAddress of the load balancer instance</li>
  * <li>instanceId: Eucalyptus instanceId of the load balancer</li>
  * </p>
- * 
+ *
  * @author raj
- * 
+ *
  */
 
 @Entity
@@ -148,7 +148,7 @@ public class LoadBalancerBean {
 
     /**
      * get load balancer creation time
-     * 
+     *
      * @return
      */
     public Date getCreatedTime() {
@@ -168,8 +168,8 @@ public class LoadBalancerBean {
     }
 
     /**
-     * get healthy theshhold
-     * 
+     * get healthy threshold
+     *
      * @return
      */
     public long getHealthyThreshold() {
@@ -178,7 +178,7 @@ public class LoadBalancerBean {
 
     /**
      * get unique database id for load balancer
-     * 
+     *
      * @return
      */
     public long getId() {
@@ -199,7 +199,7 @@ public class LoadBalancerBean {
 
     /**
      * get health check interval
-     * 
+     *
      * @return
      */
     public long getInterval() {
@@ -220,7 +220,7 @@ public class LoadBalancerBean {
 
     /**
      * get listeners defined for the load balancer
-     * 
+     *
      * @return
      */
     public Set<ListenerBean> getListeners() {
@@ -229,7 +229,7 @@ public class LoadBalancerBean {
 
     /**
      * get load balancer name
-     * 
+     *
      * @return
      */
     public String getLoadBalancerName() {
@@ -258,7 +258,7 @@ public class LoadBalancerBean {
 
     /**
      * get health check target
-     * 
+     *
      * @return
      */
     public String getTarget() {
@@ -267,7 +267,7 @@ public class LoadBalancerBean {
 
     /**
      * get timeout
-     * 
+     *
      * @return
      */
     public long getTimeout() {
@@ -276,7 +276,7 @@ public class LoadBalancerBean {
 
     /**
      * get unhealthy threshhold
-     * 
+     *
      * @return
      */
     public long getUnhealthyThreshold() {
@@ -298,7 +298,7 @@ public class LoadBalancerBean {
 
     /**
      * set load balancer creation time
-     * 
+     *
      * @param cal
      */
     public void setCreatedTime(final Date cal) {
@@ -319,7 +319,7 @@ public class LoadBalancerBean {
 
     /**
      * set health check helathy threshold
-     * 
+     *
      * @param healthyThreshold
      */
     public void setHealthyThreshold(final long healthyThreshold) {
@@ -329,7 +329,7 @@ public class LoadBalancerBean {
     /**
      * set load balancer database id; used by hibernate to return the id created
      * by database
-     * 
+     *
      * @param id
      */
     public void setId(final long id) {
@@ -350,7 +350,7 @@ public class LoadBalancerBean {
 
     /**
      * set health check for interval
-     * 
+     *
      * @param interval
      */
     public void setInterval(final long interval) {
@@ -372,7 +372,7 @@ public class LoadBalancerBean {
 
     /**
      * set listeners
-     * 
+     *
      * @param listeners
      */
     public void setListeners(final Set<ListenerBean> listeners) {
@@ -381,7 +381,7 @@ public class LoadBalancerBean {
 
     /**
      * set load balancer name
-     * 
+     *
      * @param loadBalancerName
      */
     public void setLoadBalancerName(final String loadBalancerName) {
@@ -410,7 +410,7 @@ public class LoadBalancerBean {
 
     /**
      * set health check target
-     * 
+     *
      * @param target
      */
     public void setTarget(final String target) {
@@ -419,7 +419,7 @@ public class LoadBalancerBean {
 
     /**
      * set health check timeout
-     * 
+     *
      * @param timeout
      */
     public void setTimeout(final long timeout) {
@@ -428,7 +428,7 @@ public class LoadBalancerBean {
 
     /**
      * set unhealthy threshold
-     * 
+     *
      * @param unhealthyThreshold
      */
     public void setUnhealthyThreshold(final long unhealthyThreshold) {
@@ -441,7 +441,7 @@ public class LoadBalancerBean {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

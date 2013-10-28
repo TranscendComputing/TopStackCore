@@ -20,6 +20,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.codehaus.jackson.node.ArrayNode;
+import org.dasein.cloud.CloudProvider;
+import org.dasein.cloud.compute.ComputeServices;
+import org.dasein.cloud.compute.VirtualMachine;
+import org.dasein.cloud.compute.VirtualMachineSupport;
 import org.slf4j.Logger;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -32,9 +36,11 @@ import com.msi.tough.cf.AccountType;
 import com.msi.tough.cf.CFType;
 import com.msi.tough.cf.ec2.InstanceType;
 import com.msi.tough.core.Appctx;
+import com.msi.tough.dasein.DaseinHelper;
 import com.msi.tough.engine.core.BaseProvider;
 import com.msi.tough.engine.core.CallStruct;
 import com.msi.tough.engine.utils.InstanceUtils;
+import com.msi.tough.model.AccountBean;
 
 public class DescribeInstance extends BaseProvider {
 	private final static Logger logger = Appctx
@@ -45,18 +51,21 @@ public class DescribeInstance extends BaseProvider {
 	@Override
 	public CFType create0(final CallStruct call) throws Exception {
 		final AccountType ac = call.getAc();
-		final BasicAWSCredentials cred = new BasicAWSCredentials(
-				ac.getAccessKey(), ac.getSecretKey());
+
+        final CloudProvider cloudProvider = DaseinHelper.getProvider(
+                ac.getDefZone(), ac.getTenant(),
+                ac.getAccessKey(), ac.getSecretKey());
+        final ComputeServices comp = cloudProvider.getComputeServices();
+
+        final VirtualMachineSupport vmServ = comp.getVirtualMachineSupport();
 
 		final InstanceType ins = new InstanceType();
 		ins.setAvailabilityZone((String) call.getProperty("AvailabilityZone"));
-		final AmazonEC2Client ec2 = new AmazonEC2Client(cred);
-		final String endpoint = Appctx.getBean("COMPUTE_URL");
-		ec2.setEndpoint(endpoint);
-		final DescribeInstancesRequest req = new DescribeInstancesRequest();
+
+
 		final Object ids = call.getProperty("InstanceIds");
+        final Collection<String> instanceIds = new ArrayList<String>();
 		if (ids != null) {
-			final Collection<String> instanceIds = new ArrayList<String>();
 			if (ids instanceof ArrayNode) {
 				final ArrayNode an = (ArrayNode) ids;
 				for (int i = 0; i < an.size(); i++) {
@@ -70,13 +79,10 @@ public class DescribeInstance extends BaseProvider {
 			} else {
 				instanceIds.add(ids.toString());
 			}
-			req.setInstanceIds(instanceIds);
 		}
-		final DescribeInstancesResult res = ec2.describeInstances(req);
-		for (final Reservation i : res.getReservations()) {
-			for (final Instance rins : i.getInstances()) {
-				InstanceUtils.toResource(ins, rins);
-			}
+		for (final String instanceId : instanceIds) {
+		    VirtualMachine vm = vmServ.getVirtualMachine(instanceId);
+			InstanceUtils.toResource(ins, vm, ins.getAvailabilityZone());
 		}
 		logger.debug("Instance " + ins.getInstanceId() + " "
 				+ ins.getPublicIp());
