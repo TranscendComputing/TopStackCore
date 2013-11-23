@@ -102,6 +102,10 @@ public class RDSUtilities {
 	public static final String MYSQL_REPLICATION_USER = "repl";
 	public static final String MYSQL_REPLICATION_PASSWORD = "replpassword";
 	
+	public static final String ENGINE_SQL_SERVER_EE = "SqlServer-ex";
+	public static final String ENGINE_VERSION_10_50_2789_0_v1 = "10.50.2789.0.v1";
+	public static final String ENGINE_FAMILY_SQL_SERVER = "SqlServer-ex-10.5";
+	
 	public static final String ENGINE_ORACLE_EE = "Oracle-ee";
 	public static final String ENGINE_ORACLE_SE = "Oracle-se";
 	public static final String ENGINE_ORACLE_SE1 = "Oracle-se1";
